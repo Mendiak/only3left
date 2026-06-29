@@ -83,6 +83,8 @@ const psychologyEs: Record<string, string> = {
   Anchoring: "Anclaje",
   "Commitment Bias": "Sesgo de compromiso",
   "Default Bias": "Sesgo por defecto",
+  "Variable Reward": "Recompensa variable",
+  Reciprocity: "Reciprocidad",
 };
 
 const toxicityEs: Record<Pattern["severity"], string> = {
@@ -327,6 +329,30 @@ const patternEs: Record<string, Partial<Pattern>> = {
     summary: "El control importante existe detrás de una barra sticky o entusiasmo convenientemente colocado.",
     description: "Un banner, overlay o widget bloquea contenido o controles, haciendo más fácil la acción comercial que descartarlo.",
     ethicalAlternative: "Mantén controles críticos accesibles y haz que los overlays sean descartables, proporcionales y accesibles.",
+  },
+  "like-gating": {
+    title: "Like-gating",
+    summary: "Toca dos veces para revelar. Ahora toca otra vez. Y otra.",
+    description: "El contenido, funcionalidad o información se bloquean tras un like, compartir, seguir o comentario requerido. Cada puerta de engagement baja la fricción de la siguiente, convirtiendo el consumo pasivo en promoción activa.",
+    ethicalAlternative: "Muestra el contenido libremente y deja que el usuario interactúe porque encuentra valor, no porque la interfaz lo secuestra tras una transacción.",
+  },
+  "validation-loop": {
+    title: "Bucle de validación",
+    summary: "Llega un like. Luego otro. Luego uno de hace tres horas. Dopamina a goteo.",
+    description: "Las notificaciones de reacciones (likes, corazones, votos) se entregan en un esquema de recompensa variable para crear un hábito de revisión compulsiva. Cada notificación es una recompensa social programada para arrastrar al usuario de vuelta a la app.",
+    ethicalAlternative: "Agrupa las notificaciones, permite elegir la frecuencia de entrega y evita temporizar las recompensas para maximizar la revisión.",
+  },
+  "reaction-pressure": {
+    title: "Presión de reacción",
+    summary: "1 like = 1 oración. 1 compartir = 1 árbol. Las matemáticas son emocionales, no financieras.",
+    description: "Mensajes emocionales enmarcan las reacciones como actos morales, benéficos o de apoyo, haciendo que el usuario se sienta culpable si no participa. El botón de reacción se convierte en una obligación social.",
+    ethicalAlternative: "Deja que los usuarios reaccionen de forma natural sin presión emocional. Apoya causas de forma transparente sin vincular el impacto a métricas de engagement.",
+  },
+  "hard-to-close": {
+    title: "Difícil de cerrar",
+    summary: "El botón de cerrar existe. Técnicamente. A 7 píxeles. En bajo contraste.",
+    description: "Un modal, ventana emergente u overlay hace que la acción de descartar sea deliberadamente difícil de encontrar o clicar — objetivo minúsculo, contraste bajo, fuera del viewport o escondido tras animación.",
+    ethicalAlternative: "Haz que los botones de cerrar midan al menos 44×44 px, tengan alto contraste y estén colocados en una ubicación predecible.",
   },
 };
 

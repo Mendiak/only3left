@@ -646,7 +646,7 @@ const visualExamples: Record<string, ReactNode> = {
       </div>
     </SpecimenFrame>
   ),
-  "visual-obstruction": (
+    "visual-obstruction": (
     <SpecimenFrame title="Obstructed mobile page">
       <PhoneShell>
         <div className="relative min-h-[430px] p-5">
@@ -660,6 +660,26 @@ const visualExamples: Record<string, ReactNode> = {
           </div>
         </div>
       </PhoneShell>
+    </SpecimenFrame>
+  ),
+  "like-gating": (
+    <SpecimenFrame title="Content locked behind a like">
+      <LikeGateExample />
+    </SpecimenFrame>
+  ),
+  "validation-loop": (
+    <SpecimenFrame title="Like notification feed">
+      <ValidationLoopExample />
+    </SpecimenFrame>
+  ),
+  "reaction-pressure": (
+    <SpecimenFrame title="Emotional engagement bait">
+      <ReactionPressureExample />
+    </SpecimenFrame>
+  ),
+  "hard-to-close": (
+    <SpecimenFrame title="Newsletter popup with tiny close target">
+      <HardToCloseExample />
     </SpecimenFrame>
   ),
 };
@@ -811,6 +831,244 @@ function MiniProduct({ name, price }: { name: string; price: string }) {
       <p className="mt-5 text-4xl font-black">{price}</p>
       <p className="mt-2 text-sm text-muted">Standalone license</p>
       <button className="mt-5 w-full border border-white/20 py-3 text-sm font-bold text-paper">Choose</button>
+    </div>
+  );
+}
+
+function LikeGateExample() {
+  const [liked, setLiked] = useState(false);
+  const [showGate, setShowGate] = useState(false);
+  const photo = photos.beauty;
+
+  const handleLike = () => {
+    setLiked(true);
+    setTimeout(() => setShowGate(true), 1500);
+  };
+
+  return (
+    <div className="overflow-hidden border border-white/10 bg-[#101010]">
+      <div className="relative">
+        <div className={`relative h-64 w-full overflow-hidden bg-white/10 transition-all duration-700 ${liked ? "" : "blur-xl"}`}>
+          <Image src={photo} alt="Content locked behind like" fill sizes="50vw" className="object-cover" />
+        </div>
+        {!liked && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+            <button
+              onClick={handleLike}
+              className="flex h-16 w-16 items-center justify-center rounded-full bg-accent text-3xl transition hover:scale-110"
+            >
+              ♥
+            </button>
+            <p className="text-sm font-semibold">Tap ♥ to reveal</p>
+          </div>
+        )}
+      </div>
+      <div className="p-4">
+        <p className="text-lg font-bold">The perfect summer glow</p>
+        <p className="text-sm text-muted">A simple 3-step routine.</p>
+        {showGate && (
+          <button className="mt-4 w-full border border-accent/50 bg-accent/10 py-3 text-sm font-semibold text-accent transition hover:bg-accent/20">
+            Share with a friend to unlock the full guide →
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ValidationLoopExample() {
+  const names = ["Ana", "Mark", "Lucia", "Carlos", "Emma", "James"];
+  const [visible, setVisible] = useState(0);
+  const [badge, setBadge] = useState(3);
+
+  useEffect(() => {
+    if (visible >= names.length) return;
+    const delays = [800, 600, 1200, 400, 2000, 700];
+    const timer = setTimeout(() => {
+      setVisible((v) => v + 1);
+      setBadge((b) => b + 1);
+    }, delays[visible]);
+    return () => clearTimeout(timer);
+  }, [visible]);
+
+  return (
+    <PhoneShell>
+      <div className="relative p-4">
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-lg font-black">Notifications</p>
+          <span className="grid h-6 w-6 place-items-center rounded-full bg-red-500 text-xs font-black text-white">
+            {badge}
+          </span>
+        </div>
+        <div className="space-y-3">
+          {names.slice(0, visible + 1).map((name, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-3 border border-white/10 bg-ink p-3 transition-all duration-500"
+            >
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-accent text-sm font-black text-ink">
+                {name.charAt(0)}
+              </span>
+              <div className="flex-1">
+                <p className="text-sm">
+                  <span className="font-semibold text-paper">{name}</span>{" "}
+                  <span className="text-muted">liked your photo</span>
+                </p>
+                <p className="text-xs text-muted">
+                  {i === visible ? "just now" : `${i + 1}m ago`}
+                </p>
+              </div>
+              <span className="text-lg text-red-400">♥</span>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 text-center text-xs text-muted">Pull to refresh</p>
+      </div>
+    </PhoneShell>
+  );
+}
+
+function ReactionPressureExample() {
+  const [likes, setLikes] = useState(142);
+  const [liked, setLiked] = useState(false);
+  const photo = photos.fitness;
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setLikes((prev) => prev + Math.floor(Math.random() * 3) + 1);
+    }, 2000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleLike = () => {
+    if (!liked) {
+      setLiked(true);
+      setLikes((prev) => prev + 1);
+    }
+  };
+
+  return (
+    <div className="overflow-hidden border border-white/10 bg-[#101010]">
+      <div className="relative h-48 w-full overflow-hidden bg-white/10">
+        <Image src={photo} alt="Emotional campaign image" fill sizes="50vw" className="object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+      </div>
+      <div className="space-y-4 p-4">
+        <p className="text-sm leading-6 text-paper">
+          1 like = 1 meal for a child in need.{" "}
+          <span className="text-muted">Show your support.</span>
+        </p>
+        <div className="flex items-center justify-between">
+          <button
+            onClick={handleLike}
+            className={`flex items-center gap-2 border px-4 py-2 text-sm font-semibold transition ${
+              liked
+                ? "border-red-400 bg-red-400/10 text-red-400"
+                : "border-white/20 text-paper hover:border-red-400/50"
+            }`}
+          >
+            <span className={`text-lg ${liked ? "animate-pulse" : ""}`}>
+              {liked ? "♥" : "♡"}
+            </span>
+            Like
+          </button>
+          <p className="text-sm text-muted">
+            <span className="font-semibold text-accent">{likes.toLocaleString()}</span> likes
+          </p>
+        </div>
+        <p className="text-[11px] leading-5 text-muted">
+          &ldquo;Like if you believe every child deserves a future. Every share plants a tree.&rdquo;
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function HardToCloseExample() {
+  const [closed, setClosed] = useState(false);
+  const [misses, setMisses] = useState(0);
+  const [showHint, setShowHint] = useState(false);
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const el = closeRef.current;
+    if (!el) return;
+    const parent = el.parentElement;
+    if (!parent) return;
+
+    const handleClick = (e: MouseEvent) => {
+      if (closed) return;
+      const rect = el.getBoundingClientRect();
+      const x = e.clientX;
+      const y = e.clientY;
+      if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+        setClosed(true);
+      } else {
+        setMisses((p) => p + 1);
+      }
+    };
+
+    parent.addEventListener("click", handleClick);
+    return () => parent.removeEventListener("click", handleClick);
+  }, [closed]);
+
+  if (closed) {
+    return (
+      <div className="flex flex-col items-center justify-center border border-white/10 bg-[#101010] p-10">
+        <p className="text-lg font-black">Closed!</p>
+        <p className="mt-2 text-sm text-muted">It took you {misses + 1} click{misses > 0 ? "s" : ""} to hit a 4px target.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative select-none border border-white/10 bg-[#101010]">
+      <div className="bg-ink p-5">
+        <p className="text-xs uppercase tracking-[0.18em] text-muted">Before you go</p>
+        <p className="mt-3 text-2xl font-black">Get 20% off your first order</p>
+        <p className="mt-2 text-sm leading-6 text-muted">Join 15,000 subscribers and receive exclusive access to deals, trends, and premium content.</p>
+        <div className="mt-5 space-y-3">
+          <input className="w-full border border-white/10 bg-[#101010] px-3 py-3 text-sm text-paper outline-none" placeholder="your@email.com" readOnly />
+          <button className="w-full bg-accent py-3 text-sm font-black text-ink transition hover:bg-paper">Subscribe</button>
+        </div>
+        <p className="mt-4 text-[11px] leading-5 text-muted">No spam. Unsubscribe anytime.</p>
+      </div>
+
+      <div className="absolute right-0 top-0">
+        <div
+          className="relative"
+          onMouseEnter={() => setShowHint(true)}
+          onMouseLeave={() => setShowHint(false)}
+        >
+          <button
+            ref={closeRef}
+            className="relative z-10 flex h-4 w-4 cursor-crosshair items-center justify-center text-[9px] text-white/15"
+          >
+            ✕
+          </button>
+          {showHint && (
+            <div className="absolute right-0 top-0 z-20 border border-dashed border-red-400/60 bg-red-400/5" style={{ width: "44px", height: "44px", transform: "translate(calc(-50% + 8px), calc(-50% + 8px))" }}>
+              <div className="flex h-full items-center justify-center">
+                <span className="text-[8px] uppercase tracking-[0.12em] text-red-400/60">44×44</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="absolute bottom-2 right-2 flex items-center gap-2">
+        {misses > 0 && (
+          <p className="animate-in text-[10px] text-red-400/70" style={{ animationDuration: "200ms" }}>
+            {misses} miss{misses > 1 ? "es" : ""}
+          </p>
+        )}
+        <p
+          className="cursor-pointer text-[10px] text-muted/40 underline underline-offset-2 hover:text-muted/70"
+          onClick={() => setShowHint((p) => !p)}
+        >
+          {showHint ? "hide" : "show"} target
+        </p>
+      </div>
     </div>
   );
 }

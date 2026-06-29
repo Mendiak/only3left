@@ -510,6 +510,58 @@ export const patterns: Pattern[] = [
     ethicalAlternative: "Keep critical controls unobstructed and make overlays dismissible, accessible, and proportionate.",
     origin: "Mobile web, ecommerce, support widgets, app install prompts, and cookie banners.",
   },
+  {
+    slug: "like-gating",
+    title: "Like-gating",
+    category: "Social Engineering",
+    summary: "Double-tap to reveal. Now tap again. And again.",
+    description:
+      "Content, features, or information are locked behind a required like, share, follow, or comment. Each engagement gate lowers the friction of the next, turning passive consumption into active promotion.",
+    severity: 3,
+    psychology: ["Commitment Bias", "Cognitive Load", "Social Proof"],
+    examples: ["Tap heart to reveal the answer.", "Share with 3 friends to unlock the full guide.", "Follow to continue reading this thread."],
+    ethicalAlternative: "Reveal content freely and let users engage because they find value, not because the interface locks value behind a transaction.",
+    origin: "Social media, recipe sites, quiz platforms, and content marketing funnels.",
+  },
+  {
+    slug: "validation-loop",
+    title: "Validation Loop",
+    category: "Gamification Abuse",
+    summary: "A like arrives. Then another. Then one from three hours ago. Dopamine, dripped.",
+    description:
+      "Reaction notifications — likes, hearts, upvotes — are delivered on a variable-ratio schedule to create a compulsive checking habit. Each notification is a small social reward timed to pull the user back into the app.",
+    severity: 3,
+    psychology: ["Variable Reward", "FOMO", "Commitment Bias"],
+    examples: ["Your photo received 14 new likes.", "X and 7 others liked your comment.", "Notifications arrive hours after the engagement to re-engage."],
+    ethicalAlternative: "Batch notifications, let users choose delivery cadence, and avoid timing rewards to maximize checking behavior.",
+    origin: "Social networks, dating apps, content platforms, and community products.",
+  },
+  {
+    slug: "reaction-pressure",
+    title: "Reaction Pressure",
+    category: "Attention Capture",
+    summary: "1 like = 1 prayer. 1 share = 1 tree. The math is emotional, not financial.",
+    description:
+      "Emotional messaging frames reactions as moral, charitable, or supportive acts, guilting the user into engaging. The reaction button becomes a social obligation.",
+    severity: 3,
+    psychology: ["Social Proof", "Reciprocity", "Loss Aversion"],
+    examples: ["1 like = 1€ donated to clean water.", "Like if you think this is unacceptable.", "Share to show you care."],
+    ethicalAlternative: "Let users react naturally without emotional framing. Support causes transparently without tying impact to engagement metrics.",
+    origin: "Facebook, Instagram, TikTok, Twitter/X, and charitable campaigns.",
+  },
+  {
+    slug: "hard-to-close",
+    title: "Hard-to-Close",
+    category: "Interface Manipulation",
+    summary: "The close button exists. Technically. At 7 pixels. In low contrast.",
+    description:
+      "A modal, popup, or overlay makes the dismiss action deliberately hard to find or click — tiny target, low contrast, outside viewport, or hidden behind motion.",
+    severity: 3,
+    psychology: ["Cognitive Load", "Default Bias"],
+    examples: ["A newsletter modal places the X in low-contrast grey outside the visible area on mobile.", "A cookie banner offers no close button, only a tiny text link among paragraphs."],
+    ethicalAlternative: "Make close buttons at least 44×44px, high-contrast, and placed in a predictable location.",
+    origin: "Newsletter popups, cookie banners, app-install interstitials, and ecommerce overlays.",
+  },
 ];
 
 export function getFeaturedPatterns() {
