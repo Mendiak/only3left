@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { Pattern } from "@/lib/types";
 
@@ -40,6 +43,21 @@ const photos = {
   beauty:
     "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1000&q=80",
 };
+
+const feedPhotos = [
+  photos.shopping, photos.workspace, photos.travel, photos.phone,
+  photos.sneakers, photos.concert, photos.hotel, photos.timer,
+  photos.lamp, photos.app, photos.article, photos.course,
+  photos.video, photos.fitness, photos.ai, photos.beauty,
+  "https://images.unsplash.com/photo-1549388604-817d15aa0110?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80",
+];
 
 const visualExamples: Record<string, ReactNode> = {
   "fake-scarcity": (
@@ -223,19 +241,8 @@ const visualExamples: Record<string, ReactNode> = {
     </SpecimenFrame>
   ),
   "infinite-scroll": (
-    <SpecimenFrame title="Recommendation feed">
-      <div className="grid gap-3 md:grid-cols-2">
-        {[photos.shopping, photos.workspace, photos.travel, photos.phone].map((src, index) => (
-          <article key={src} className="overflow-hidden border border-white/10 bg-[#101010]">
-            <Photo src={src} alt="Feed item" small />
-            <div className="p-3">
-              <p className="font-semibold">Recommended story #{index + 1}</p>
-              <p className="text-sm text-muted">Because you paused for 1.7 seconds.</p>
-            </div>
-          </article>
-        ))}
-      </div>
-      <p className="mt-4 text-center text-xs uppercase tracking-[0.22em] text-accent">Loading more</p>
+    <SpecimenFrame title="Instagram-like feed">
+      <InfiniteScrollFeed />
     </SpecimenFrame>
   ),
   "notification-addiction": (
@@ -804,6 +811,57 @@ function MiniProduct({ name, price }: { name: string; price: string }) {
       <p className="mt-5 text-4xl font-black">{price}</p>
       <p className="mt-2 text-sm text-muted">Standalone license</p>
       <button className="mt-5 w-full border border-white/20 py-3 text-sm font-bold text-paper">Choose</button>
+    </div>
+  );
+}
+
+function InfiniteScrollFeed() {
+  const pageSize = 6;
+  const [itemCount, setItemCount] = useState(pageSize);
+  const [loading, setLoading] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const hasMore = itemCount < feedPhotos.length;
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading && hasMore) {
+          setLoading(true);
+          setTimeout(() => {
+            setItemCount((prev) => Math.min(prev + pageSize, feedPhotos.length));
+            setLoading(false);
+          }, 1000);
+        }
+      },
+      { rootMargin: "300px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loading, hasMore]);
+
+  const items = feedPhotos.slice(0, itemCount);
+
+  return (
+    <div className="max-h-[500px] overflow-y-auto">
+      <div className="grid grid-cols-3 gap-0.5">
+        {items.map((src, i) => (
+          <div key={i} className="relative aspect-square overflow-hidden bg-white/10">
+            <Image src={src} alt={`Post ${i + 1}`} fill sizes="33vw" className="object-cover" />
+          </div>
+        ))}
+        {loading &&
+          Array.from({ length: 3 }).map((_, i) => (
+            <div key={`skel-${i}`} className="aspect-square animate-pulse bg-white/10" />
+          ))}
+      </div>
+      <div ref={sentinelRef} className="h-4" />
+      {!hasMore && !loading && (
+        <p className="py-4 text-center text-xs uppercase tracking-[0.22em] text-muted">
+          You're all caught up
+        </p>
+      )}
     </div>
   );
 }
