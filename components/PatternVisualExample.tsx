@@ -682,6 +682,11 @@ const visualExamples: Record<string, ReactNode> = {
       <HardToCloseExample />
     </SpecimenFrame>
   ),
+  "live-activity-indicator": (
+    <SpecimenFrame title="Live activity feed on a hotel listing">
+      <LiveActivityExample />
+    </SpecimenFrame>
+  ),
 };
 
 export function PatternVisualExample({ pattern }: PatternVisualExampleProps) {
@@ -1068,6 +1073,96 @@ function HardToCloseExample() {
         >
           {showHint ? "hide" : "show"} target
         </p>
+      </div>
+    </div>
+  );
+}
+
+function LiveActivityExample() {
+  const [viewers, setViewers] = useState(14);
+  const [buyers, setBuyers] = useState(3);
+  const [showFakeToast, setShowFakeToast] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setViewers((prev) => {
+        const delta = Math.floor(Math.random() * 5) - 2;
+        return Math.max(10, prev + delta);
+      });
+      const shouldBuy = Math.random() > 0.6;
+      if (shouldBuy) {
+        setBuyers((prev) => prev + 1);
+        setShowFakeToast(true);
+        setTimeout(() => setShowFakeToast(false), 2500);
+      }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const names = ["Ana", "Mark", "Lucia", "Carlos", "Emma"];
+  const [toastName, setToastName] = useState("Ana");
+
+  useEffect(() => {
+    if (showFakeToast) {
+      setToastName(names[Math.floor(Math.random() * names.length)]);
+    }
+  }, [showFakeToast]);
+
+  return (
+    <div className="overflow-hidden border border-white/10 bg-[#101010]">
+      <div className="relative h-44 w-full overflow-hidden bg-white/10">
+        <Image src={photos.hotel} alt="Hotel" fill sizes="50vw" className="object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+      </div>
+      <div className="space-y-4 p-4">
+        <div>
+          <p className="text-lg font-bold">Grand Palace Hotel</p>
+          <p className="text-sm text-muted">City center · 4.2 ⭐ (312 reviews)</p>
+        </div>
+
+        <div className="flex items-center gap-2 border border-accent/30 bg-accent/10 px-3 py-2">
+          <span className="relative flex size-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+            <span className="relative inline-flex size-2 rounded-full bg-green-500" />
+          </span>
+          <span className="text-sm font-semibold text-accent">
+            {viewers} people viewing this
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-lg text-muted line-through">€249</span>
+            <span className="ml-2 text-2xl font-bold text-paper">€119</span>
+          </div>
+          <span className="rounded bg-red-500/20 px-2 py-1 text-xs font-semibold text-red-400">-52%</span>
+        </div>
+
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+          <div className="h-full w-[12%] rounded-full bg-accent" />
+        </div>
+        <p className="text-xs text-muted">{buyers > 0 ? `${buyers} people booked in the last 24h` : "Only 3 rooms left"}</p>
+
+        <button className="w-full bg-accent py-3 text-sm font-black text-ink transition hover:bg-paper">
+          Book now
+        </button>
+
+        {showFakeToast && (
+          <div className="animate-in flex items-center gap-2 border border-white/10 bg-ink px-3 py-2">
+            <span className="grid size-7 place-items-center rounded-full bg-accent text-xs font-black text-ink">
+              {toastName.charAt(0)}
+            </span>
+            <p className="text-sm text-muted">
+              <span className="font-semibold text-paper">{toastName}</span> just booked this hotel
+            </p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-3 gap-1 text-center text-[10px] uppercase tracking-[0.16em] text-muted">
+          <span className="border border-white/10 py-1.5">Social Proof</span>
+          <span className="border border-white/10 py-1.5">FOMO</span>
+          <span className="border border-white/10 py-1.5">Urgency</span>
+        </div>
       </div>
     </div>
   );

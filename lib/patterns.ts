@@ -562,6 +562,24 @@ export const patterns: Pattern[] = [
     ethicalAlternative: "Make close buttons at least 44×44px, high-contrast, and placed in a predictable location.",
     origin: "Newsletter popups, cookie banners, app-install interstitials, and ecommerce overlays.",
   },
+  {
+    slug: "live-activity-indicator",
+    title: "Live Activity Indicator",
+    category: "Social Engineering",
+    summary: "A green dot. A number. A pulse. Someone, somewhere, is watching. Maybe.",
+    description:
+      "A live indicator — typically a pulsing dot, rolling number, or animated counter — claims to show real-time activity (views, purchases, signups) by other users. The signal is designed to feel immediate and social, but the data is often simulated, averaged, delayed, or根本无法验证. The animation itself creates a sense of momentum that makes inaction feel like losing out.",
+    severity: 3,
+    psychology: ["Social Proof", "FOMO", "Cognitive Load"],
+    examples: [
+      "A green pulsing dot next to '14 people are viewing this' on a hotel booking site.",
+      "'5 people bought this in the last hour' counter that resets daily regardless of real sales.",
+      "A scrolling notification bar: 'Sarah from Manchester just purchased...' with fabricated names.",
+      "A real-time visitor counter on a landing page that shows the same number on every visit.",
+    ],
+    ethicalAlternative: "Show verifiable, timestamped activity data when available. Avoid animation that implies urgency without substance. If using aggregated stats, label them clearly as averages or totals.",
+    origin: "Travel booking, ecommerce, SaaS landing pages, webinar funnels, and donation platforms.",
+  },
 ];
 
 export function getFeaturedPatterns() {
