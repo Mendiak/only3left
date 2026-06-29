@@ -1,6 +1,14 @@
 import Link from "next/link";
+import type { Locale } from "@/lib/i18n";
+import { localePath, ui } from "@/lib/i18n";
 
-export function Hero() {
+type HeroProps = {
+  locale?: Locale;
+};
+
+export function Hero({ locale = "en" }: HeroProps) {
+  const copy = ui[locale];
+
   return (
     <section className="relative overflow-hidden border-b border-white/10">
       <div className="absolute inset-x-0 top-16 h-px editorial-rule opacity-50" />
@@ -10,16 +18,16 @@ export function Hero() {
           <h1 className="max-w-4xl text-5xl font-black leading-none tracking-normal text-paper sm:text-7xl lg:text-8xl">
             ONLY 3 LEFT™
           </h1>
-          <p className="mt-5 text-2xl text-accent sm:text-3xl">A field guide to deceptive UX.</p>
+          <p className="mt-5 text-2xl text-accent sm:text-3xl">{copy.heroSubtitle}</p>
           <p className="mt-7 max-w-2xl text-lg leading-8 text-muted">
-            An interactive catalogue of techniques used to influence user decisions online.
+            {copy.heroText}
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
-            <Link href="/patterns" className="bg-accent px-5 py-3 font-semibold text-ink transition hover:bg-paper">
-              Explore Patterns
+            <Link href={localePath(locale, "/patterns")} className="bg-accent px-5 py-3 font-semibold text-ink transition hover:bg-paper">
+              {copy.explorePatterns}
             </Link>
-            <Link href="/random" className="border border-white/20 px-5 py-3 font-semibold text-paper transition hover:border-accent hover:text-accent">
-              Random Manipulation
+            <Link href={localePath(locale, "/random")} className="border border-white/20 px-5 py-3 font-semibold text-paper transition hover:border-accent hover:text-accent">
+              {copy.randomManipulation}
             </Link>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { PatternVisualExample } from "@/components/PatternVisualExample";
 import { SeverityMeter } from "@/components/SeverityMeter";
 import { getPattern, patterns } from "@/lib/patterns";
 
@@ -55,6 +56,18 @@ export default async function PatternPage({ params }: PatternPageProps) {
             The pattern changes the cost of thinking. It makes the preferred action immediate, emotionally charged, or visually dominant,
             while making the more reflective action slower, duller, or easier to doubt.
           </p>
+        </section>
+
+        <section className="border-b border-white/10 py-10" aria-labelledby="visual-example">
+          <h2 id="visual-example" className="text-2xl font-semibold">
+            Visual Example
+          </h2>
+          <p className="mt-4 text-lg leading-8 text-muted">
+            A simplified specimen designed to make the pattern recognizable at a glance.
+          </p>
+          <div className="mt-6">
+            <PatternVisualExample pattern={pattern} />
+          </div>
         </section>
 
         <section className="border-b border-white/10 py-10" aria-labelledby="psychology">
