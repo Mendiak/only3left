@@ -3,23 +3,21 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { patterns } from "@/lib/patterns";
+import { localizePattern } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n";
 
-export function AlsoLike({ currentSlug, locale = "en" }: { currentSlug: string; locale?: string }) {
-  const [suggestions, setSuggestions] = useState<typeof patterns>([]);
+export function AlsoLike({ currentSlug, locale = "en" }: { currentSlug: string; locale?: Locale }) {
+  const [suggestions, setSuggestions] = useState<ReturnType<typeof localizePattern>[]>([]);
 
   useEffect(() => {
     const current = patterns.find((p) => p.slug === currentSlug);
     const sameCategory = patterns.filter(
       (p) => p.slug !== currentSlug && p.category === current?.category
     );
-    const others = patterns.filter(
-      (p) => p.slug !== currentSlug && p.category !== current?.category
-    );
-
     const pool = sameCategory.length >= 3 ? sameCategory : patterns.filter((p) => p.slug !== currentSlug);
     const shuffled = [...pool].sort(() => Math.random() - 0.5);
-    setSuggestions(shuffled.slice(0, 3));
-  }, [currentSlug]);
+    setSuggestions(shuffled.slice(0, 3).map((p) => localizePattern(p, locale as Locale)));
+  }, [currentSlug, locale]);
 
   if (suggestions.length === 0) return null;
 
