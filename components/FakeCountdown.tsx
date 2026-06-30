@@ -41,15 +41,17 @@ export function FakeCountdown({ locale = "en" }: { locale?: Locale }) {
   const remainingSeconds = String(seconds % 60).padStart(2, "0");
 
   return (
-    <article className="border border-white/10 bg-ink p-5">
+    <article className="group border border-white/10 bg-ink p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5">
       <p className="text-xs uppercase tracking-[0.22em] text-accent">{t.label}</p>
       <h3 className="mt-4 text-xl font-semibold">{t.title}</h3>
       <div className="my-6 border border-white/10 bg-surface p-5 text-center">
         <p className="text-sm text-muted">{t.expiresIn}</p>
-        <p className="mt-2 text-5xl font-black tabular-nums">{minutes}:{remainingSeconds}</p>
+        <p className="mt-2 text-5xl font-black tabular-nums transition-all duration-500" key={seconds}>
+          {minutes}:{remainingSeconds}
+        </p>
       </div>
       {expired ? (
-        <div className="space-y-2 border border-accent/40 bg-accent/10 p-4">
+        <div className="space-y-2 border border-accent/40 bg-accent/10 p-4 animate-fade-in-up">
           <p className="font-semibold text-accent">{t.nothingHappened}</p>
           <p className="text-sm text-muted">{t.pattern}</p>
         </div>

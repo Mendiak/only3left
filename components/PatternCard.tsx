@@ -25,7 +25,7 @@ export function PatternCard({ pattern, locale = "en" }: PatternCardProps) {
   const displayPattern = localizePattern(pattern, locale);
 
   return (
-    <Link href={localePath(locale, `/patterns/${pattern.slug}`)} className="group flex min-h-64 flex-col justify-between border border-white/10 bg-surface p-5 transition hover:border-accent">
+    <Link href={localePath(locale, `/patterns/${pattern.slug}`)} className="group flex min-h-64 flex-col justify-between border border-white/10 bg-surface p-5 transition-all duration-300 hover:-translate-y-1 hover:border-accent hover:shadow-xl hover:shadow-accent/5">
       <div>
         <div className="mb-5 flex items-start justify-between gap-4">
           <span className="text-3xl" aria-hidden="true">

@@ -17,6 +17,10 @@ export function Header() {
     { href: localePath(locale, "/about"), label: copy.about },
   ];
 
+  function isActive(href: string) {
+    return pathname === href || pathname.startsWith(href + "/");
+  }
+
   return (
     <header className="sticky top-0 z-20 border-b border-white/10 bg-ink/95 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4 sm:px-8" aria-label="Main navigation">
@@ -25,14 +29,24 @@ export function Header() {
         </Link>
         <div className="flex items-center gap-3 text-sm text-muted sm:gap-5">
           {navItems.map((item) => (
-            <Link key={item.href} href={item.href} className="transition hover:text-paper">
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`link-underline transition hover:text-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-ink ${isActive(item.href) ? "text-paper" : ""}`}
+            >
               {item.label}
             </Link>
           ))}
-          <Link href={localePath(locale, "/random")} className="border border-accent px-3 py-1.5 text-accent transition hover:bg-accent hover:text-ink">
+          <Link
+            href={localePath(locale, "/random")}
+            className="border border-accent px-3 py-1.5 text-accent transition-all duration-200 hover:scale-105 hover:bg-accent hover:text-ink active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
+          >
             {copy.random}
           </Link>
-          <Link href={alternatePath} className="text-xs uppercase tracking-[0.18em] text-muted transition hover:text-paper">
+          <Link
+            href={alternatePath}
+            className="text-xs uppercase tracking-[0.18em] text-muted transition hover:text-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
+          >
             {locale === "es" ? "EN" : "ES"}
           </Link>
         </div>
