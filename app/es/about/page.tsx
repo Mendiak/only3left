@@ -1,7 +1,12 @@
 import { FadeInView } from "@/components/FadeInView";
 
 export const metadata = {
-  title: "Acerca | ONLY 3 LEFT™",
+  title: "Acerca",
+  description:
+    "ONLY 3 LEFT™ es una guía de campo educativa que documenta patrones de UX engañosa como especímenes de interfaz.",
+  openGraph: {
+    locale: "es_ES",
+  },
 };
 
 export default function SpanishAboutPage() {

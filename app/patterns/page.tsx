@@ -3,7 +3,9 @@ import { PatternGrid } from "@/components/PatternGrid";
 import { patterns } from "@/lib/patterns";
 
 export const metadata = {
-  title: "Patterns | ONLY 3 LEFT™",
+  title: "Patterns",
+  description:
+    "A working archive of 40 deceptive UX patterns — interface tactics that pressure, obscure, distract, or quietly preselect.",
 };
 
 export default function PatternsPage() {

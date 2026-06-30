@@ -18,11 +18,26 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PatternPageProps) {
   const { slug } = await params;
   const pattern = getPattern(slug);
-  const displayPattern = pattern ? localizePattern(pattern, "es") : undefined;
+
+  if (!pattern) {
+    return { title: "Patrón no encontrado" };
+  }
+
+  const displayPattern = localizePattern(pattern, "es");
 
   return {
-    title: displayPattern ? `${displayPattern.title} | ONLY 3 LEFT™` : "Patrón | ONLY 3 LEFT™",
-    description: displayPattern?.summary,
+    title: displayPattern.title,
+    description: displayPattern.summary,
+    openGraph: {
+      title: `${displayPattern.title} — ONLY 3 LEFT™`,
+      description: displayPattern.summary,
+      type: "article",
+      locale: "es_ES",
+    },
+    twitter: {
+      title: `${displayPattern.title} — ONLY 3 LEFT™`,
+      description: displayPattern.summary,
+    },
   };
 }
 

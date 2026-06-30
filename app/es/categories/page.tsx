@@ -4,7 +4,12 @@ import { localizeCategoryData, localePath, localizePattern } from "@/lib/i18n";
 import { getPatternsByCategory } from "@/lib/patterns";
 
 export const metadata = {
-  title: "Categorías | ONLY 3 LEFT™",
+  title: "Categorías",
+  description:
+    "10 categorías de patrones de UX engañosa — desde Urgencia y escasez hasta Abuso de confianza y autoridad.",
+  openGraph: {
+    locale: "es_ES",
+  },
 };
 
 export default function SpanishCategoriesPage() {

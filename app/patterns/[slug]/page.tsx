@@ -19,9 +19,22 @@ export async function generateMetadata({ params }: PatternPageProps) {
   const { slug } = await params;
   const pattern = getPattern(slug);
 
+  if (!pattern) {
+    return { title: "Pattern not found" };
+  }
+
   return {
-    title: pattern ? `${pattern.title} | ONLY 3 LEFT™` : "Pattern | ONLY 3 LEFT™",
-    description: pattern?.summary,
+    title: pattern.title,
+    description: pattern.summary,
+    openGraph: {
+      title: `${pattern.title} — ONLY 3 LEFT™`,
+      description: pattern.summary,
+      type: "article",
+    },
+    twitter: {
+      title: `${pattern.title} — ONLY 3 LEFT™`,
+      description: pattern.summary,
+    },
   };
 }
 

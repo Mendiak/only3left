@@ -1,7 +1,9 @@
 import { FadeInView } from "@/components/FadeInView";
 
 export const metadata = {
-  title: "About | ONLY 3 LEFT™",
+  title: "About",
+  description:
+    "ONLY 3 LEFT™ is an educational field guide documenting deceptive UX patterns as interface specimens.",
 };
 
 export default function AboutPage() {

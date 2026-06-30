@@ -3,7 +3,9 @@ import { FadeInView } from "@/components/FadeInView";
 import { getPatternsByCategory } from "@/lib/patterns";
 
 export const metadata = {
-  title: "Categories | ONLY 3 LEFT™",
+  title: "Categories",
+  description:
+    "10 categories of deceptive UX patterns — from Urgency & Scarcity to Trust & Authority Abuse.",
 };
 
 export default function CategoriesPage() {

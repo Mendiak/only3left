@@ -3,7 +3,12 @@ import { PatternGrid } from "@/components/PatternGrid";
 import { patterns } from "@/lib/patterns";
 
 export const metadata = {
-  title: "Patrones | ONLY 3 LEFT™",
+  title: "Patrones",
+  description:
+    "Un archivo de 40 patrones de UX engañosa — tácticas de interfaz que presionan, ocultan, distraen o preseleccionan en silencio.",
+  openGraph: {
+    locale: "es_ES",
+  },
 };
 
 export default function SpanishPatternsPage() {

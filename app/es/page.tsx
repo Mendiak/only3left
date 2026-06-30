@@ -10,7 +10,12 @@ import { ui } from "@/lib/i18n";
 import { getFeaturedPatterns } from "@/lib/patterns";
 
 export const metadata = {
-  title: "ONLY 3 LEFT™ | Guía de campo sobre UX engañosa",
+  title: "Guía de campo sobre UX engañosa",
+  description:
+    "Un catálogo interactivo de patrones de UX engañosa — nombra, clasifica y entiende la manipulación de interfaces.",
+  openGraph: {
+    locale: "es_ES",
+  },
 };
 
 export default function SpanishHomePage() {

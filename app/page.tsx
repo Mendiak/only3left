@@ -8,6 +8,11 @@ import { PricingTrap } from "@/components/PricingTrap";
 import { categories } from "@/lib/categories";
 import { getFeaturedPatterns } from "@/lib/patterns";
 
+export const metadata = {
+  description:
+    "An interactive catalogue of deceptive UX patterns — name, classify, and understand interface manipulation.",
+};
+
 export default function HomePage() {
   const featuredPatterns = getFeaturedPatterns();
 
