@@ -61,7 +61,7 @@ export default async function SpanishPatternPage({ params }: PatternPageProps) {
           <h2 className="text-2xl font-semibold">{ui.es.visualExample}</h2>
           <p className="mt-4 text-lg leading-8 text-muted">{ui.es.visualExampleIntro}</p>
           <div className="mt-6">
-            <PatternVisualExample pattern={pattern} />
+            <PatternVisualExample pattern={pattern} locale="es" />
           </div>
         </section>
 

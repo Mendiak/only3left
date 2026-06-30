@@ -14,7 +14,7 @@ export function Footer() {
         <div className="flex flex-col gap-1 sm:flex-row sm:gap-4">
           <p>{ui[locale].built}</p>
           <p>
-            Hecho por{" "}
+            {locale === "es" ? "Hecho por" : "Built by"}{" "}
             <a
               href="https://mendiak.github.io/portfolio/"
               target="_blank"

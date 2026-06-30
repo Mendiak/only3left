@@ -42,9 +42,9 @@ export default function SpanishHomePage() {
               Pequeñas manipulaciones, educadamente enmarcadas.
             </h2>
           </div>
-          <FakeCountdown />
-          <CookieSimulator />
-          <PricingTrap />
+          <FakeCountdown locale="es" />
+          <CookieSimulator locale="es" />
+          <PricingTrap locale="es" />
         </div>
       </section>
 

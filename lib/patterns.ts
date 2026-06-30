@@ -8,7 +8,7 @@ export const patterns: Pattern[] = [
     category: "Urgency & Scarcity",
     summary: "Only 3 rooms left. Allegedly. Conveniently. Forever.",
     description:
-      "Fake scarcity claims that a product, seat, room, or offer is almost gone without making the constraint verifiable or meaningful.",
+      "Fake scarcity creates the impression that something is about to disappear — without making the limit verifiable, meaningful, or even real.",
     severity: 5,
     psychology: ["Loss Aversion", "FOMO", "Cognitive Load"],
     examples: ["Only 3 left at this price.", "14 people are viewing this item right now."],
@@ -100,7 +100,7 @@ export const patterns: Pattern[] = [
     category: "Privacy Manipulation",
     summary: "Sharing more than intended, with excellent onboarding confetti.",
     description:
-      "The interface nudges users into disclosing personal information or granting permissions they did not clearly understand.",
+      "The interface guides users toward sharing more than they realise, one friendly permission at a time — each request reasonable in isolation, troubling in aggregate.",
     severity: 5,
     psychology: ["Default Bias", "Cognitive Load", "Social Proof"],
     examples: ["Find friends requires broad contact access.", "Profile visibility defaults to public after setup."],
@@ -204,7 +204,7 @@ export const patterns: Pattern[] = [
     category: "Pricing Manipulation",
     summary: "The price starts polite and becomes honest only at the end.",
     description:
-      "A product is advertised with a low headline price while mandatory fees, service charges, taxes, or handling costs appear gradually through checkout.",
+      "A product seems affordable at first glance, then gradually reveals mandatory fees throughout checkout — each one small, each one already committed to.",
     severity: 5,
     psychology: ["Anchoring", "Commitment Bias", "Cognitive Load"],
     examples: ["A 39€ ticket becomes 61€ after platform, processing, and delivery fees.", "A hotel rate excludes unavoidable resort fees until checkout."],
@@ -217,7 +217,7 @@ export const patterns: Pattern[] = [
     category: "Pricing Manipulation",
     summary: "A small extra arrives in the basket with admirable confidence.",
     description:
-      "An extra product, service, warranty, donation, or protection plan is added to the cart without a clear active choice from the user.",
+      "The cart quietly adds an extra item — a warranty, a donation, a protection plan — without anything resembling an active choice.",
     severity: 5,
     psychology: ["Default Bias", "Cognitive Load"],
     examples: ["A warranty is silently added below the main item.", "A donation line appears in the basket unless removed manually."],
@@ -282,7 +282,7 @@ export const patterns: Pattern[] = [
     category: "Interface Manipulation",
     summary: "Attention is escorted away from the part that costs money.",
     description:
-      "The interface uses layout, emphasis, animation, imagery, or copy to draw attention away from important terms, costs, or consequences.",
+      "The interface steers attention away from what matters — terms, costs, consequences — using layout, motion, or copy that makes the catch less noticeable than the bait.",
     severity: 4,
     psychology: ["Cognitive Load", "Anchoring"],
     examples: ["A bright discount dominates the page while recurring billing is tiny.", "A free shipping message distracts from a handling fee."],
@@ -321,7 +321,7 @@ export const patterns: Pattern[] = [
     category: "Social Engineering",
     summary: "Someone in Bristol just bought this exact anxiety.",
     description:
-      "The interface displays recent purchases, signups, views, or locations that are simulated, exaggerated, or not relevant to the current item.",
+      "The interface fabricates a sense of demand — recent purchases, live views, signup notifications — that is simulated, recycled, or simply made up.",
     severity: 4,
     psychology: ["Social Proof", "FOMO"],
     examples: ["Maria from Lisbon just booked this room.", "27 people are checking out this product now."],
@@ -516,7 +516,7 @@ export const patterns: Pattern[] = [
     category: "Social Engineering",
     summary: "Double-tap to reveal. Now tap again. And again.",
     description:
-      "Content, features, or information are locked behind a required like, share, follow, or comment. Each engagement gate lowers the friction of the next, turning passive consumption into active promotion.",
+      "Content, features, or information are locked behind a required like, share, follow, or comment. Each gate makes the next easier to walk through, turning passive browsing into active promotion.",
     severity: 3,
     psychology: ["Commitment Bias", "Cognitive Load", "Social Proof"],
     examples: ["Tap heart to reveal the answer.", "Share with 3 friends to unlock the full guide.", "Follow to continue reading this thread."],
@@ -529,7 +529,7 @@ export const patterns: Pattern[] = [
     category: "Gamification Abuse",
     summary: "A like arrives. Then another. Then one from three hours ago. Dopamine, dripped.",
     description:
-      "Reaction notifications — likes, hearts, upvotes — are delivered on a variable-ratio schedule to create a compulsive checking habit. Each notification is a small social reward timed to pull the user back into the app.",
+      "Reaction notifications — likes, hearts, upvotes — arrive on a variable-ratio schedule designed to build a checking habit. Each ping is a small social reward, timed to reel the user back in.",
     severity: 3,
     psychology: ["Variable Reward", "FOMO", "Commitment Bias"],
     examples: ["Your photo received 14 new likes.", "X and 7 others liked your comment.", "Notifications arrive hours after the engagement to re-engage."],
@@ -542,7 +542,7 @@ export const patterns: Pattern[] = [
     category: "Attention Capture",
     summary: "1 like = 1 prayer. 1 share = 1 tree. The math is emotional, not financial.",
     description:
-      "Emotional messaging frames reactions as moral, charitable, or supportive acts, guilting the user into engaging. The reaction button becomes a social obligation.",
+      "Emotional messaging frames reactions as moral, charitable, or supportive acts, guilt-tripping the user into participating. The reaction button becomes a social obligation.",
     severity: 3,
     psychology: ["Social Proof", "Reciprocity", "Loss Aversion"],
     examples: ["1 like = 1€ donated to clean water.", "Like if you think this is unacceptable.", "Share to show you care."],
@@ -568,7 +568,7 @@ export const patterns: Pattern[] = [
     category: "Social Engineering",
     summary: "A green dot. A number. A pulse. Someone, somewhere, is watching. Maybe.",
     description:
-      "A live indicator — typically a pulsing dot, rolling number, or animated counter — claims to show real-time activity (views, purchases, signups) by other users. The signal is designed to feel immediate and social, but the data is often simulated, averaged, delayed, or根本无法验证. The animation itself creates a sense of momentum that makes inaction feel like losing out.",
+      "A live indicator — typically a pulsing dot, rolling number, or animated counter — claims to show real-time activity (views, purchases, signups) by other users. The signal is designed to feel immediate and social, but the data is often simulated, averaged, delayed, or simply unverifiable. The animation itself creates a sense of momentum that makes inaction feel like losing out.",
     severity: 3,
     psychology: ["Social Proof", "FOMO", "Cognitive Load"],
     examples: [

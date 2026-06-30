@@ -4,10 +4,16 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { Pattern } from "@/lib/types";
+import type { Locale } from "@/lib/i18n";
 
 type PatternVisualExampleProps = {
   pattern: Pattern;
+  locale?: Locale;
 };
+
+function tx(locale: Locale, en: string, es: string) {
+  return locale === "es" ? es : en;
+}
 
 const photos = {
   hotel:
@@ -59,197 +65,206 @@ const feedPhotos = [
   "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80",
 ];
 
-const visualExamples: Record<string, ReactNode> = {
-  "fake-scarcity": (
-    <SpecimenFrame title="Hotel booking result">
+const visualExamples: Record<string, (locale: Locale) => ReactNode> = {
+  "fake-scarcity": (locale) => (
+    <SpecimenFrame title={tx(locale, "Hotel booking result", "Resultado de reserva de hotel")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.hotel} alt="Hotel room" />
+        <Photo src={photos.hotel} alt={tx(locale, "Hotel room", "Habitación de hotel")} />
         <div className="space-y-4 p-4">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xl font-bold">Central Studio, Old Town</p>
-              <p className="text-sm text-muted">Free cancellation · Breakfast included</p>
+              <p className="text-sm text-muted">{tx(locale, "Free cancellation", "Cancelación gratuita")} · {tx(locale, "Breakfast included", "Desayuno incluido")}</p>
             </div>
-            <Rating value="8.9" label="Excellent" />
+            <Rating value="8.9" label={tx(locale, "Excellent", "Excelente")} />
           </div>
           <div className="flex flex-wrap gap-2">
-            <Badge tone="warning">Only 3 rooms left</Badge>
-            <Badge tone="neutral">22 people viewed today</Badge>
+            <Badge tone="warning">{tx(locale, "Only 3 rooms left", "Solo quedan 3 habitaciones")}</Badge>
+            <Badge tone="neutral">{tx(locale, "22 people viewed today", "22 personas lo vieron hoy")}</Badge>
           </div>
           <div className="flex items-end justify-between gap-4 border-t border-white/10 pt-4">
             <div>
-              <p className="text-xs text-muted">Tonight</p>
+              <p className="text-xs text-muted">{tx(locale, "Tonight", "Esta noche")}</p>
               <p className="text-2xl font-black">142€</p>
             </div>
-            <Button>Reserve</Button>
+            <Button>{tx(locale, "Reserve", "Reservar")}</Button>
           </div>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "countdown-reset": (
-    <SpecimenFrame title="Flash sale checkout">
+  "countdown-reset": (locale) => (
+    <SpecimenFrame title={tx(locale, "Flash sale checkout", "Compra flash")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.timer} alt="Vacation landscape" />
+        <Photo src={photos.timer} alt={tx(locale, "Vacation landscape", "Paisaje de vacaciones")} />
         <div className="space-y-4 p-4">
           <div className="flex items-center justify-between">
-            <Badge tone="warning">Private deal</Badge>
-            <p className="text-xs text-muted">Session offer</p>
+            <Badge tone="warning">{tx(locale, "Private deal", "Oferta privada")}</Badge>
+            <p className="text-xs text-muted">{tx(locale, "Session offer", "Oferta de sesión")}</p>
           </div>
-          <p className="text-2xl font-black">Mediterranean weekend</p>
+          <p className="text-2xl font-black">{tx(locale, "Mediterranean weekend", "Fin de semana mediterráneo")}</p>
           <div className="grid grid-cols-[1fr_auto] items-center gap-3 border border-accent/40 bg-accent/10 p-3">
-            <span className="text-sm text-accent">Discount expires in</span>
+            <span className="text-sm text-accent">{tx(locale, "Discount expires in", "El descuento expira en")}</span>
             <span className="font-mono text-3xl font-black text-accent">00:04</span>
           </div>
-          <Button full>Claim discount</Button>
+          <Button full>{tx(locale, "Claim discount", "Consigue el descuento")}</Button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  confirmshaming: (
-    <SpecimenFrame title="Exit-intent discount modal">
+  confirmshaming: (locale) => (
+    <SpecimenFrame title={tx(locale, "Exit-intent discount modal", "Modal de descuento al salir")}>
       <div className="mx-auto max-w-md border border-white/10 bg-[#101010] p-5 text-center shadow-2xl shadow-black/40">
-        <Badge tone="warning">Before you go</Badge>
-        <p className="mt-4 text-3xl font-black">Get 15% off your first order</p>
-        <p className="mt-3 text-sm leading-6 text-muted">Join 40,000 readers receiving weekly product advice.</p>
+        <Badge tone="warning">{tx(locale, "Before you go", "Antes de irte")}</Badge>
+        <p className="mt-4 text-3xl font-black">{tx(locale, "Get 15% off your first order", "Consigue un 15% en tu primer pedido")}</p>
+        <p className="mt-3 text-sm leading-6 text-muted">{tx(locale, "Join 40,000 readers receiving weekly product advice.", "Únete a 40.000 lectores que reciben consejos semanales.")}</p>
         <div className="mt-5 space-y-3">
           <input className="w-full border border-white/10 bg-ink px-3 py-3 text-sm text-paper outline-none" placeholder="email@example.com" />
-          <Button full>Yes, send my discount</Button>
-          <button className="text-sm text-muted underline underline-offset-4">No thanks, I hate saving money</button>
+          <Button full>{tx(locale, "Yes, send my discount", "Sí, enviadme el descuento")}</Button>
+          <button className="text-sm text-muted underline underline-offset-4">{tx(locale, "No thanks, I hate saving money", "No, gracias. Prefiero pagar más")}</button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "roach-motel": (
-    <SpecimenFrame title="Subscription account area">
+  "roach-motel": (locale) => (
+    <SpecimenFrame title={tx(locale, "Subscription account area", "Área de suscripción")}>
       <div className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
         <aside className="border border-white/10 bg-[#101010] p-4">
-          {["Overview", "Billing", "Invoices", "Team", "Security", "Support"].map((item, index) => (
+          {(locale === "es"
+            ? ["Resumen", "Facturación", "Facturas", "Equipo", "Seguridad", "Soporte"]
+            : ["Overview", "Billing", "Invoices", "Team", "Security", "Support"]
+          ).map((item, index) => (
             <div key={item} className={`border-b border-white/10 py-3 text-sm ${index === 1 ? "text-accent" : "text-muted"}`}>
               {item}
             </div>
           ))}
         </aside>
         <div className="border border-white/10 bg-[#101010] p-5">
-          <p className="text-2xl font-black">Premium Plan</p>
-          <p className="mt-2 text-sm text-muted">Renews on July 29. Upgrade anytime.</p>
+          <p className="text-2xl font-black">{tx(locale, "Premium Plan", "Plan Premium")}</p>
+          <p className="mt-2 text-sm text-muted">{tx(locale, "Renews on July 29. Upgrade anytime.", "Se renueva el 29 de julio. Mejora cuando quieras.")}</p>
           <div className="mt-5 grid gap-3">
-            <Button full>Upgrade instantly</Button>
-            <button className="border border-white/20 py-3 font-semibold text-paper">Change payment method</button>
-            <button className="text-left text-xs text-muted">Need to cancel? Contact retention support after reviewing available plan options.</button>
+            <Button full>{tx(locale, "Upgrade instantly", "Mejorar ahora")}</Button>
+            <button className="border border-white/20 py-3 font-semibold text-paper">{tx(locale, "Change payment method", "Cambiar método de pago")}</button>
+            <button className="text-left text-xs text-muted">{tx(locale, "Need to cancel? Contact retention support after reviewing available plan options.", "¿Cancelar? Contacta con soporte de retención tras revisar las opciones disponibles.")}</button>
           </div>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "decoy-pricing": (
-    <SpecimenFrame title="SaaS pricing table">
+  "decoy-pricing": (locale) => (
+    <SpecimenFrame title={tx(locale, "SaaS pricing table", "Tabla de precios SaaS")}>
       <div className="grid gap-3 md:grid-cols-3">
-        <Plan name="Basic" price="5€" description="Limited projects, community support." />
-        <Plan name="Pro" price="19€" description="Unlimited projects, exports, support." badge="Most popular" featured />
-        <Plan name="Ultra" price="199€" description="Everything in Pro, plus a ceremonial invoice." />
+        <Plan name={tx(locale, "Basic", "Básico")} price="5€" description={tx(locale, "Limited projects, community support.", "Proyectos limitados, soporte comunitario.")} locale={locale} />
+        <Plan name="Pro" price="19€" description={tx(locale, "Unlimited projects, exports, support.", "Proyectos ilimitados, exportaciones, soporte.")} badge={tx(locale, "Most popular", "Más popular")} featured locale={locale} />
+        <Plan name={tx(locale, "Ultra", "Ultra")} price="199€" description={tx(locale, "Everything in Pro, plus a ceremonial invoice.", "Todo lo de Pro, más una factura ceremonial.")} locale={locale} />
       </div>
     </SpecimenFrame>
   ),
-  "hidden-cancellation": (
-    <SpecimenFrame title="Settings navigation">
+  "hidden-cancellation": (locale) => (
+    <SpecimenFrame title={tx(locale, "Settings navigation", "Navegación de ajustes")}>
       <div className="border border-white/10 bg-[#101010] p-4">
         <div className="mb-4 flex items-center justify-between">
-          <p className="text-xl font-bold">Account settings</p>
-          <Badge tone="neutral">Active subscription</Badge>
+          <p className="text-xl font-bold">{tx(locale, "Account settings", "Ajustes de cuenta")}</p>
+          <Badge tone="neutral">{tx(locale, "Active subscription", "Suscripción activa")}</Badge>
         </div>
         <div className="grid gap-2">
-          {["Profile", "Billing details", "Plan usage", "Invoices", "Notification preferences", "Help center"].map((item) => (
+          {(locale === "es"
+            ? ["Perfil", "Datos de facturación", "Uso del plan", "Facturas", "Preferencias", "Centro de ayuda"]
+            : ["Profile", "Billing details", "Plan usage", "Invoices", "Notification preferences", "Help center"]
+          ).map((item) => (
             <div key={item} className="flex items-center justify-between border border-white/10 bg-ink p-3">
               <span>{item}</span>
               <span className="text-muted">›</span>
             </div>
           ))}
         </div>
-        <p className="mt-4 text-xs text-muted">Cancellation requests are handled through account assistance.</p>
+        <p className="mt-4 text-xs text-muted">{tx(locale, "Cancellation requests are handled through account assistance.", "Las solicitudes de cancelación se gestionan a través de asistencia de cuenta.")}</p>
       </div>
     </SpecimenFrame>
   ),
-  "forced-continuity": (
-    <SpecimenFrame title="Trial signup panel">
+  "forced-continuity": (locale) => (
+    <SpecimenFrame title={tx(locale, "Trial signup panel", "Panel de prueba gratuita")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.workspace} alt="Workspace desk" />
+        <Photo src={photos.workspace} alt={tx(locale, "Workspace desk", "Escritorio de trabajo")} />
         <div className="space-y-4 p-5">
-          <Badge tone="warning">7 days free</Badge>
-          <p className="text-3xl font-black">Start your Pro trial</p>
-          <p className="text-sm leading-6 text-muted">0€ today. Annual plan begins automatically after trial unless cancelled.</p>
-          <div className="border border-white/10 bg-ink p-3 text-sm text-muted">Card required to verify your account.</div>
-          <Button full>Start free trial</Button>
+          <Badge tone="warning">{tx(locale, "7 days free", "7 días gratis")}</Badge>
+          <p className="text-3xl font-black">{tx(locale, "Start your Pro trial", "Prueba Pro gratis")}</p>
+          <p className="text-sm leading-6 text-muted">{tx(locale, "0€ today. Annual plan begins automatically after trial unless cancelled.", "0€ hoy. El plan anual comienza automáticamente tras la prueba si no se cancela.")}</p>
+          <div className="border border-white/10 bg-ink p-3 text-sm text-muted">{tx(locale, "Card required to verify your account.", "Tarjeta necesaria para verificar tu cuenta.")}</div>
+          <Button full>{tx(locale, "Start free trial", "Iniciar prueba gratis")}</Button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "privacy-zuckering": (
-    <SpecimenFrame title="Mobile onboarding permission">
+  "privacy-zuckering": (locale) => (
+    <SpecimenFrame title={tx(locale, "Mobile onboarding permission", "Permiso de onboarding móvil")}>
       <PhoneShell>
-        <Photo src={photos.app} alt="Mobile app screen" small />
+        <Photo src={photos.app} alt={tx(locale, "Mobile app screen", "Pantalla de app móvil")} small />
         <div className="space-y-4 p-4">
-          <p className="text-2xl font-black">Find people you know</p>
-          <p className="text-sm leading-6 text-muted">Upload contacts to personalize your experience and connect faster.</p>
-          <Button full>Continue with contacts</Button>
-          <button className="w-full py-2 text-sm text-muted">Skip for now</button>
+          <p className="text-2xl font-black">{tx(locale, "Find people you know", "Encuentra a personas conocidas")}</p>
+          <p className="text-sm leading-6 text-muted">{tx(locale, "Upload contacts to personalize your experience and connect faster.", "Sube contactos para personalizar tu experiencia y conectar más rápido.")}</p>
+          <Button full>{tx(locale, "Continue with contacts", "Continuar con contactos")}</Button>
+          <button className="w-full py-2 text-sm text-muted">{tx(locale, "Skip for now", "Saltar por ahora")}</button>
         </div>
       </PhoneShell>
     </SpecimenFrame>
   ),
-  "social-proof-inflation": (
-    <SpecimenFrame title="Product page trust signals">
+  "social-proof-inflation": (locale) => (
+    <SpecimenFrame title={tx(locale, "Product page trust signals", "Señales de confianza en producto")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.lamp} alt="Desk lamp" />
+        <Photo src={photos.lamp} alt={tx(locale, "Desk lamp", "Lámpara de escritorio")} />
         <div className="space-y-4 p-4">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xl font-bold">Arc table lamp</p>
-              <p className="text-sm text-muted">Warm light · Matte black</p>
+              <p className="text-sm text-muted">{tx(locale, "Warm light", "Luz cálida")} · {tx(locale, "Matte black", "Negro mate")}</p>
             </div>
-            <Rating value="4.9" label="2,341 reviews" />
+            <Rating value="4.9" label={tx(locale, "2,341 reviews", "2.341 reseñas")} />
           </div>
-          <Badge tone="warning">4,812 people bought this today</Badge>
-          <Button full>Add to cart</Button>
+          <Badge tone="warning">{tx(locale, "4,812 people bought this today", "4.812 personas compraron esto hoy")}</Badge>
+          <Button full>{tx(locale, "Add to cart", "Añadir al carrito")}</Button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "visual-hierarchy-manipulation": (
-    <SpecimenFrame title="Unequal consent controls">
+  "visual-hierarchy-manipulation": (locale) => (
+    <SpecimenFrame title={tx(locale, "Unequal consent controls", "Controles de consentimiento desiguales")}>
       <div className="mx-auto max-w-lg border border-white/10 bg-[#101010] p-5">
-        <p className="text-xl font-bold">Personalize your experience</p>
-        <p className="mt-3 text-sm leading-6 text-muted">We use data to improve recommendations, ads, analytics, and product research.</p>
+        <p className="text-xl font-bold">{tx(locale, "Personalize your experience", "Personaliza tu experiencia")}</p>
+        <p className="mt-3 text-sm leading-6 text-muted">{tx(locale, "We use data to improve recommendations, ads, analytics, and product research.", "Usamos datos para mejorar recomendaciones, anuncios, análisis e investigación de producto.")}</p>
         <div className="mt-5 space-y-4">
-          <Button full>Accept all</Button>
-          <button className="mx-auto block text-xs text-muted">Reject non-essential tracking</button>
+          <Button full>{tx(locale, "Accept all", "Aceptar todo")}</Button>
+          <button className="mx-auto block text-xs text-muted">{tx(locale, "Reject non-essential tracking", "Rechazar el rastreo no esencial")}</button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "cookie-labyrinth": (
-    <SpecimenFrame title="Cookie consent banner">
+  "cookie-labyrinth": (locale) => (
+    <SpecimenFrame title={tx(locale, "Cookie consent banner", "Banner de cookies")}>
       <div className="border border-white/10 bg-[#101010] p-5">
-        <p className="text-xl font-bold">We value your privacy</p>
-        <p className="mt-2 text-sm leading-6 text-muted">We and our partners store and access information for measurement, ads, content personalization, and product improvement.</p>
+        <p className="text-xl font-bold">{tx(locale, "We value your privacy", "Valoramos tu privacidad")}</p>
+        <p className="mt-2 text-sm leading-6 text-muted">{tx(locale, "We and our partners store and access information for measurement, ads, content personalization, and product improvement.", "Nosotros y nuestros socios almacenamos y accedemos a información para medición, anuncios, personalización y mejora del producto.")}</p>
         <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_1fr_1.4fr]">
-          <button className="border border-white/20 py-3 text-sm font-semibold">Reject all</button>
-          <button className="border border-white/20 py-3 text-sm font-semibold">Manage options</button>
-          <Button>Accept all partners</Button>
+          <button className="border border-white/20 py-3 text-sm font-semibold">{tx(locale, "Reject all", "Rechazar todo")}</button>
+          <button className="border border-white/20 py-3 text-sm font-semibold">{tx(locale, "Manage options", "Gestionar opciones")}</button>
+          <Button>{tx(locale, "Accept all partners", "Aceptar todos los socios")}</Button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "infinite-scroll": (
-    <SpecimenFrame title="Instagram-like feed">
-      <InfiniteScrollFeed />
+  "infinite-scroll": (locale) => (
+    <SpecimenFrame title={tx(locale, "Instagram-like feed", "Feed estilo Instagram")}>
+      <InfiniteScrollFeed locale={locale} />
     </SpecimenFrame>
   ),
-  "notification-addiction": (
-    <SpecimenFrame title="Mobile notification grid">
+  "notification-addiction": (locale) => (
+    <SpecimenFrame title={tx(locale, "Mobile notification grid", "Cuadrícula de notificaciones")}>
       <PhoneShell>
         <div className="grid grid-cols-3 gap-4 p-5">
-          {["Mail", "Chat", "Shop", "Game", "News", "Bank", "Fit", "Cloud", "Notes"].map((item, index) => (
+          {(locale === "es"
+            ? ["Correo", "Chat", "Tienda", "Juego", "Noticias", "Banco", "Fit", "Nube", "Notas"]
+            : ["Mail", "Chat", "Shop", "Game", "News", "Bank", "Fit", "Cloud", "Notes"]
+          ).map((item, index) => (
             <div key={item} className="relative aspect-square rounded-2xl border border-white/10 bg-white/[0.06] p-2 text-xs text-muted">
               {index < 6 && <span className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full bg-red-500 text-xs font-black text-white">{index + 1}</span>}
               <span className="absolute bottom-2 left-2">{item}</span>
@@ -259,439 +274,440 @@ const visualExamples: Record<string, ReactNode> = {
       </PhoneShell>
     </SpecimenFrame>
   ),
-  "default-bias": (
-    <SpecimenFrame title="Checkout defaults">
+  "default-bias": (locale) => (
+    <SpecimenFrame title={tx(locale, "Checkout defaults", "Opciones por defecto en checkout")}>
       <div className="border border-white/10 bg-[#101010] p-5">
-        <p className="text-2xl font-black">Complete checkout</p>
+        <p className="text-2xl font-black">{tx(locale, "Complete checkout", "Completar compra")}</p>
         <div className="mt-5 space-y-3">
-          <CheckedRow label="Annual billing selected" />
-          <CheckedRow label="Receive marketing emails" />
-          <CheckedRow label="Share analytics data to improve service" />
+          <CheckedRow label={tx(locale, "Annual billing selected", "Facturación anual seleccionada")} />
+          <CheckedRow label={tx(locale, "Receive marketing emails", "Recibir correos promocionales")} />
+          <CheckedRow label={tx(locale, "Share analytics data to improve service", "Compartir datos analíticos para mejorar el servicio")} />
         </div>
-        <Button full className="mt-5">Continue</Button>
+        <Button full className="mt-5">{tx(locale, "Continue", "Continuar")}</Button>
       </div>
     </SpecimenFrame>
   ),
-  "preselected-options": (
-    <SpecimenFrame title="Travel checkout extras">
+  "preselected-options": (locale) => (
+    <SpecimenFrame title={tx(locale, "Travel checkout extras", "Extras en reserva de viaje")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.travel} alt="Beach travel destination" />
+        <Photo src={photos.travel} alt={tx(locale, "Beach travel destination", "Destino de playa")} />
         <div className="space-y-3 p-5">
-          <CheckedRow label="Travel insurance +12€" />
-          <CheckedRow label="Priority boarding +8€" />
-          <CheckedRow label="Flexible ticket protection +19€" />
+          <CheckedRow label={tx(locale, "Travel insurance +12€", "Seguro de viaje +12€")} />
+          <CheckedRow label={tx(locale, "Priority boarding +8€", "Embarque prioritario +8€")} />
+          <CheckedRow label={tx(locale, "Flexible ticket protection +19€", "Protección de billete flexible +19€")} />
           <div className="flex justify-between border-t border-white/10 pt-4 text-xl font-black">
-            <span>Total</span>
+            <span>{tx(locale, "Total", "Total")}</span>
             <span>238€</span>
           </div>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "drip-pricing": (
-    <SpecimenFrame title="Ticket checkout with late fees">
+  "drip-pricing": (locale) => (
+    <SpecimenFrame title={tx(locale, "Ticket checkout with late fees", "Compra de entradas con tasas ocultas")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.concert} alt="Concert crowd" />
+        <Photo src={photos.concert} alt={tx(locale, "Concert crowd", "Concierto multitudinario")} />
         <div className="space-y-4 p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-2xl font-black">North Hall Live</p>
-              <p className="text-sm text-muted">General admission ticket</p>
+              <p className="text-sm text-muted">{tx(locale, "General admission ticket", "Entrada general")}</p>
             </div>
-            <Badge tone="warning">From 39€</Badge>
+            <Badge tone="warning">{tx(locale, "From 39€", "Desde 39€")}</Badge>
           </div>
-          <PriceLine label="Ticket" value="39€" />
-          <PriceLine label="Service fee" value="8€" muted />
-          <PriceLine label="Processing fee" value="5€" muted />
-          <PriceLine label="Mobile delivery" value="4€" muted />
+          <PriceLine label={tx(locale, "Ticket", "Entrada")} value="39€" />
+          <PriceLine label={tx(locale, "Service fee", "Tasa de servicio")} value="8€" muted />
+          <PriceLine label={tx(locale, "Processing fee", "Tasa de gestión")} value="5€" muted />
+          <PriceLine label={tx(locale, "Mobile delivery", "Entrega móvil")} value="4€" muted />
           <div className="flex justify-between border-t border-white/10 pt-4 text-2xl font-black">
-            <span>Total</span>
+            <span>{tx(locale, "Total", "Total")}</span>
             <span>56€</span>
           </div>
-          <Button full>Pay now</Button>
+          <Button full>{tx(locale, "Pay now", "Pagar ahora")}</Button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "sneak-into-basket": (
-    <SpecimenFrame title="Cart with inserted add-on">
+  "sneak-into-basket": (locale) => (
+    <SpecimenFrame title={tx(locale, "Cart with inserted add-on", "Carrito con extra añadido")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.sneakers} alt="Sneakers" />
+        <Photo src={photos.sneakers} alt={tx(locale, "Sneakers", "Zapatillas")} />
         <div className="space-y-3 p-5">
-          <BasketRow title="Running shoes" price="89€" />
-          <BasketRow title="Premium protection plan" price="14€" badge="Added for you" />
-          <BasketRow title="Carbon offset contribution" price="3€" badge="Recommended" />
+          <BasketRow title={tx(locale, "Running shoes", "Zapatillas de running")} price="89€" />
+          <BasketRow title={tx(locale, "Premium protection plan", "Plan de protección premium")} price="14€" badge={tx(locale, "Added for you", "Añadido para ti")} />
+          <BasketRow title={tx(locale, "Carbon offset contribution", "Contribución de compensación de carbono")} price="3€" badge={tx(locale, "Recommended", "Recomendado")} />
           <div className="flex justify-between border-t border-white/10 pt-4 text-xl font-black">
-            <span>Total</span>
+            <span>{tx(locale, "Total", "Total")}</span>
             <span>106€</span>
           </div>
-          <Button full>Checkout</Button>
+          <Button full>{tx(locale, "Checkout", "Pagar")}</Button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "bait-and-switch": (
-    <SpecimenFrame title="Download page switch">
+  "bait-and-switch": (locale) => (
+    <SpecimenFrame title={tx(locale, "Download page switch", "Página de descarga con cambio")}>
       <div className="grid gap-4 md:grid-cols-[1fr_0.9fr]">
         <div className="border border-white/10 bg-[#101010] p-5">
-          <Badge tone="neutral">Free resource</Badge>
+          <Badge tone="neutral">{tx(locale, "Free resource", "Recurso gratuito")}</Badge>
           <p className="mt-4 text-3xl font-black">UX Audit Template</p>
-          <p className="mt-3 text-sm leading-6 text-muted">A downloadable checklist for product teams.</p>
-          <Button full className="mt-5">Download template</Button>
+          <p className="mt-3 text-sm leading-6 text-muted">{tx(locale, "A downloadable checklist for product teams.", "Una lista descargable para equipos de producto.")}</p>
+          <Button full className="mt-5">{tx(locale, "Download template", "Descargar plantilla")}</Button>
         </div>
         <div className="border border-accent/40 bg-accent/10 p-5">
-          <p className="text-xs uppercase tracking-[0.18em] text-accent">Next step</p>
-          <p className="mt-4 text-2xl font-black">Create an account to continue</p>
-          <p className="mt-3 text-sm text-muted">The free template is available inside the trial workspace.</p>
+          <p className="text-xs uppercase tracking-[0.18em] text-accent">{tx(locale, "Next step", "Siguiente paso")}</p>
+          <p className="mt-4 text-2xl font-black">{tx(locale, "Create an account to continue", "Crea una cuenta para continuar")}</p>
+          <p className="mt-3 text-sm text-muted">{tx(locale, "The free template is available inside the trial workspace.", "La plantilla gratuita está disponible dentro del espacio de prueba.")}</p>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "disguised-ads": (
-    <SpecimenFrame title="Search results with native ad">
+  "disguised-ads": (locale) => (
+    <SpecimenFrame title={tx(locale, "Search results with native ad", "Resultados con anuncio nativo")}>
       <div className="space-y-3 border border-white/10 bg-[#101010] p-4">
-        <SearchResult title="Best noise-cancelling headphones" label="Sponsored" mutedLabel />
-        <SearchResult title="Independent headphone reviews 2026" />
-        <SearchResult title="Top-rated wireless headphones compared" />
-        <SearchResult title="Headphone buying guide" />
+        <SearchResult title={tx(locale, "Best noise-cancelling headphones", "Mejores cascos con cancelación de ruido")} label={tx(locale, "Sponsored", "Patrocinado")} mutedLabel locale={locale} />
+        <SearchResult title={tx(locale, "Independent headphone reviews 2026", "Reseñas independientes de cascos 2026")} locale={locale} />
+        <SearchResult title={tx(locale, "Top-rated wireless headphones compared", "Cascos inalámbricos mejor valorados")} locale={locale} />
+        <SearchResult title={tx(locale, "Headphone buying guide", "Guía de compra de cascos")} locale={locale} />
       </div>
     </SpecimenFrame>
   ),
-  nagging: (
-    <SpecimenFrame title="Repeated mobile prompt">
+  nagging: (locale) => (
+    <SpecimenFrame title={tx(locale, "Repeated mobile prompt", "Notificación repetitiva")}>
       <PhoneShell>
         <div className="space-y-5 p-5">
-          <Badge tone="warning">One more thing</Badge>
-          <p className="text-2xl font-black">Enable notifications?</p>
-          <p className="text-sm leading-6 text-muted">Stay updated with reminders, offers, alerts, recommendations, and important updates.</p>
-          <Button full>Allow notifications</Button>
-          <button className="w-full py-2 text-sm text-muted">Maybe later</button>
-          <p className="text-center text-xs text-muted">Prompt shown 6 times this week</p>
+          <Badge tone="warning">{tx(locale, "One more thing", "Una cosa más")}</Badge>
+          <p className="text-2xl font-black">{tx(locale, "Enable notifications?", "¿Activar notificaciones?")}</p>
+          <p className="text-sm leading-6 text-muted">{tx(locale, "Stay updated with reminders, offers, alerts, recommendations, and important updates.", "Mantente al día con recordatorios, ofertas, alertas, recomendaciones y avisos importantes.")}</p>
+          <Button full>{tx(locale, "Allow notifications", "Permitir notificaciones")}</Button>
+          <button className="w-full py-2 text-sm text-muted">{tx(locale, "Maybe later", "Quizá más tarde")}</button>
+          <p className="text-center text-xs text-muted">{tx(locale, "Prompt shown 6 times this week", "Aviso mostrado 6 veces esta semana")}</p>
         </div>
       </PhoneShell>
     </SpecimenFrame>
   ),
-  "trick-questions": (
-    <SpecimenFrame title="Marketing consent form">
+  "trick-questions": (locale) => (
+    <SpecimenFrame title={tx(locale, "Marketing consent form", "Formulario de consentimiento")}>
       <div className="border border-white/10 bg-[#101010] p-5">
-        <p className="text-2xl font-black">Communication preferences</p>
+        <p className="text-2xl font-black">{tx(locale, "Communication preferences", "Preferencias de comunicación")}</p>
         <div className="mt-5 space-y-3">
-          <CheckedRow label="Do not untick this box if you want to avoid missing member offers" />
-          <CheckedRow label="I do not wish to opt out of selected partner updates" />
-          <CheckedRow label="Keep me informed unless I have not declined" />
+          <CheckedRow label={tx(locale, "Do not untick this box if you want to avoid missing member offers", "No desmarque esta casilla si no quiere perderse ofertas de socios")} />
+          <CheckedRow label={tx(locale, "I do not wish to opt out of selected partner updates", "No deseo renunciar a comunicaciones de socios seleccionados")} />
+          <CheckedRow label={tx(locale, "Keep me informed unless I have not declined", "Mantenerme informado a menos que no haya rechazado")} />
         </div>
-        <Button full className="mt-5">Save preferences</Button>
+        <Button full className="mt-5">{tx(locale, "Save preferences", "Guardar preferencias")}</Button>
       </div>
     </SpecimenFrame>
   ),
-  misdirection: (
-    <SpecimenFrame title="Promotion with buried terms">
+  misdirection: (locale) => (
+    <SpecimenFrame title={tx(locale, "Promotion with buried terms", "Promoción con condiciones ocultas")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.shopping} alt="Shopping bag" />
+        <Photo src={photos.shopping} alt={tx(locale, "Shopping bag", "Bolsa de compras")} />
         <div className="p-5">
           <p className="text-5xl font-black text-accent">50% OFF</p>
-          <p className="mt-2 text-xl font-bold">Today only on selected essentials</p>
-          <Button className="mt-5">Shop the sale</Button>
+          <p className="mt-2 text-xl font-bold">{tx(locale, "Today only on selected essentials", "Hoy solo en productos seleccionados")}</p>
+          <Button className="mt-5">{tx(locale, "Shop the sale", "Comprar en oferta")}</Button>
           <p className="mt-5 text-[11px] leading-5 text-muted">
-            Discount applies after membership activation. Membership renews monthly. Handling fee and selected exclusions apply.
+            {tx(locale, "Discount applies after membership activation. Membership renews monthly. Handling fee and selected exclusions apply.", "El descuento se aplica tras activar la membresía. La membresía se renueva mensualmente. Se aplican gastos de gestión y exclusiones.")}
           </p>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "comparison-prevention": (
-    <SpecimenFrame title="Hard-to-compare plans">
+  "comparison-prevention": (locale) => (
+    <SpecimenFrame title={tx(locale, "Hard-to-compare plans", "Planes difíciles de comparar")}>
       <div className="grid gap-3 md:grid-cols-3">
-        <MetricPlan name="Starter" price="9€/mo" metric="2 projects" detail="100 credits per workspace" />
-        <MetricPlan name="Growth" price="84€/yr" metric="10 seats" detail="1,200 credits billed annually" featured />
-        <MetricPlan name="Scale" price="0.04€/task" metric="usage based" detail="minimum monthly platform fee applies" />
+        <MetricPlan name={tx(locale, "Starter", "Inicial")} price="9€/mo" metric={tx(locale, "2 projects", "2 proyectos")} detail={tx(locale, "100 credits per workspace", "100 créditos por espacio")} />
+        <MetricPlan name={tx(locale, "Growth", "Crecimiento")} price="84€/yr" metric={tx(locale, "10 seats", "10 asientos")} detail={tx(locale, "1,200 credits billed annually", "1.200 créditos facturados al año")} featured />
+        <MetricPlan name={tx(locale, "Scale", "Escala")} price="0.04€/task" metric={tx(locale, "usage based", "por uso")} detail={tx(locale, "minimum monthly platform fee applies", "se aplica tarifa mínima mensual")} />
       </div>
     </SpecimenFrame>
   ),
-  "fake-discount": (
-    <SpecimenFrame title="Inflated reference price">
+  "fake-discount": (locale) => (
+    <SpecimenFrame title={tx(locale, "Inflated reference price", "Precio de referencia inflado")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.course} alt="Online course" />
+        <Photo src={photos.course} alt={tx(locale, "Online course", "Curso online")} />
         <div className="space-y-4 p-5">
-          <Badge tone="warning">Ends tonight</Badge>
-          <p className="text-2xl font-black">Advanced Product Psychology</p>
+          <Badge tone="warning">{tx(locale, "Ends tonight", "Termina esta noche")}</Badge>
+          <p className="text-2xl font-black">{tx(locale, "Advanced Product Psychology", "Psicología de Producto Avanzada")}</p>
           <div className="flex items-end gap-3">
             <span className="text-4xl font-black text-accent">59€</span>
             <span className="pb-1 text-xl text-muted line-through">299€</span>
-            <span className="pb-1 text-sm font-bold text-accent">80% off</span>
+            <span className="pb-1 text-sm font-bold text-accent">{tx(locale, "80% off", "80% descuento")}</span>
           </div>
-          <Button full>Enroll now</Button>
+          <Button full>{tx(locale, "Enroll now", "Inscribirme ahora")}</Button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "fake-activity": (
-    <SpecimenFrame title="Live purchase notifications">
+  "fake-activity": (locale) => (
+    <SpecimenFrame title={tx(locale, "Live purchase notifications", "Notificaciones de compras en vivo")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.hotel} alt="Hotel lobby" />
+        <Photo src={photos.hotel} alt={tx(locale, "Hotel lobby", "Vestíbulo de hotel")} />
         <div className="space-y-3 p-5">
-          <p className="text-2xl font-black">City weekend package</p>
-          <ActivityToast name="Marta from Lisbon" action="booked this 2 minutes ago" />
-          <ActivityToast name="Jon from Bristol" action="is viewing this offer" />
-          <ActivityToast name="17 people" action="are checking dates now" />
-          <Button full>Reserve package</Button>
+          <p className="text-2xl font-black">{tx(locale, "City weekend package", "Paquete de fin de semana")}</p>
+          <ActivityToast name={tx(locale, "Marta from Lisbon", "Marta de Lisboa")} action={tx(locale, "booked this 2 minutes ago", "reservó esto hace 2 minutos")} />
+          <ActivityToast name={tx(locale, "Jon from Bristol", "Jon de Bristol")} action={tx(locale, "is viewing this offer", "está viendo esta oferta")} />
+          <ActivityToast name={tx(locale, "17 people", "17 personas")} action={tx(locale, "are checking dates now", "están consultando fechas ahora")} />
+          <Button full>{tx(locale, "Reserve package", "Reservar paquete")}</Button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "friend-spam": (
-    <SpecimenFrame title="Contact import invitation">
+  "friend-spam": (locale) => (
+    <SpecimenFrame title={tx(locale, "Contact import invitation", "Invitación de importación de contactos")}>
       <PhoneShell>
         <div className="space-y-4 p-5">
-          <p className="text-2xl font-black">Invite your contacts</p>
-          <p className="text-sm leading-6 text-muted">We found 284 people who may want to join your workspace.</p>
+          <p className="text-2xl font-black">{tx(locale, "Invite your contacts", "Invita a tus contactos")}</p>
+          <p className="text-sm leading-6 text-muted">{tx(locale, "We found 284 people who may want to join your workspace.", "Encontramos 284 personas que querrían unirse a tu espacio.")}</p>
           {["Ana", "Mark", "Lucia"].map((name) => (
-            <CheckedRow key={name} label={`${name} selected for invitation`} />
+            <CheckedRow key={name} label={`${name} ${tx(locale, "selected for invitation", "seleccionado para invitación")}`} />
           ))}
-          <Button full>Send invites</Button>
-          <button className="w-full text-xs text-muted">Review selected contacts</button>
+          <Button full>{tx(locale, "Send invites", "Enviar invitaciones")}</Button>
+          <button className="w-full text-xs text-muted">{tx(locale, "Review selected contacts", "Revisar contactos seleccionados")}</button>
         </div>
       </PhoneShell>
     </SpecimenFrame>
   ),
-  "permission-priming": (
-    <SpecimenFrame title="Pre-permission prompt">
+  "permission-priming": (locale) => (
+    <SpecimenFrame title={tx(locale, "Pre-permission prompt", "Aviso previo al permiso")}>
       <PhoneShell>
         <div className="space-y-5 p-5 text-center">
-          <Badge tone="warning">Recommended</Badge>
-          <p className="text-2xl font-black">Allow location to protect your account</p>
-          <p className="text-sm leading-6 text-muted">People who enable location get faster alerts and a safer community experience.</p>
-          <Button full>Continue</Button>
-          <button className="text-sm text-muted">Not now</button>
+          <Badge tone="warning">{tx(locale, "Recommended", "Recomendado")}</Badge>
+          <p className="text-2xl font-black">{tx(locale, "Allow location to protect your account", "Permite la ubicación para proteger tu cuenta")}</p>
+          <p className="text-sm leading-6 text-muted">{tx(locale, "People who enable location get faster alerts and a safer community experience.", "Quienes activan la ubicación reciben alertas más rápidas y una experiencia más segura.")}</p>
+          <Button full>{tx(locale, "Continue", "Continuar")}</Button>
+          <button className="text-sm text-muted">{tx(locale, "Not now", "Ahora no")}</button>
         </div>
       </PhoneShell>
     </SpecimenFrame>
   ),
-  "forced-registration": (
-    <SpecimenFrame title="Guest checkout blocked">
+  "forced-registration": (locale) => (
+    <SpecimenFrame title={tx(locale, "Guest checkout blocked", "Checkout de invitado bloqueado")}>
       <div className="grid gap-4 md:grid-cols-[1fr_0.9fr]">
         <div className="border border-white/10 bg-[#101010] p-5">
-          <p className="text-2xl font-black">Your basket</p>
-          <BasketRow title="Desk organizer" price="24€" />
-          <BasketRow title="Notebook set" price="12€" />
+          <p className="text-2xl font-black">{tx(locale, "Your basket", "Tu cesta")}</p>
+          <BasketRow title={tx(locale, "Desk organizer", "Organizador de escritorio")} price="24€" />
+          <BasketRow title={tx(locale, "Notebook set", "Set de libretas")} price="12€" />
           <div className="mt-4 flex justify-between border-t border-white/10 pt-4 font-black">
-            <span>Total</span>
+            <span>{tx(locale, "Total", "Total")}</span>
             <span>36€</span>
           </div>
         </div>
         <div className="border border-accent/40 bg-accent/10 p-5">
-          <p className="text-2xl font-black">Create an account to continue</p>
-          <p className="mt-3 text-sm leading-6 text-muted">Checkout, tracking, support, and receipts are available after registration.</p>
-          <Button full className="mt-5">Create account</Button>
+          <p className="text-2xl font-black">{tx(locale, "Create an account to continue", "Crea una cuenta para continuar")}</p>
+          <p className="mt-3 text-sm leading-6 text-muted">{tx(locale, "Checkout, tracking, support, and receipts are available after registration.", "El pago, seguimiento, soporte y recibos están disponibles tras el registro.")}</p>
+          <Button full className="mt-5">{tx(locale, "Create account", "Crear cuenta")}</Button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "autoplay-trap": (
-    <SpecimenFrame title="Video autoplay queue">
+  "autoplay-trap": (locale) => (
+    <SpecimenFrame title={tx(locale, "Video autoplay queue", "Cola de reproducción automática")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.video} alt="Video player" />
+        <Photo src={photos.video} alt={tx(locale, "Video player", "Reproductor de vídeo")} />
         <div className="space-y-4 p-5">
           <div className="flex items-center justify-between">
-            <p className="text-xl font-black">Episode complete</p>
-            <Badge tone="warning">Next in 5</Badge>
+            <p className="text-xl font-black">{tx(locale, "Episode complete", "Episodio completado")}</p>
+            <Badge tone="warning">{tx(locale, "Next in 5", "Siguiente en 5")}</Badge>
           </div>
           <div className="h-2 overflow-hidden bg-white/10">
             <div className="h-full w-4/5 bg-accent" />
           </div>
-          <Button full>Keep watching</Button>
-          <button className="w-full text-sm text-muted">Cancel autoplay</button>
+          <Button full>{tx(locale, "Keep watching", "Seguir viendo")}</Button>
+          <button className="w-full text-sm text-muted">{tx(locale, "Cancel autoplay", "Cancelar autoplay")}</button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "streak-pressure": (
-    <SpecimenFrame title="Habit streak screen">
+  "streak-pressure": (locale) => (
+    <SpecimenFrame title={tx(locale, "Habit streak screen", "Pantalla de racha")}>
       <PhoneShell>
         <div className="space-y-5 p-5 text-center">
-          <Photo src={photos.fitness} alt="Fitness training" small />
+          <Photo src={photos.fitness} alt={tx(locale, "Fitness training", "Entrenamiento")} small />
           <p className="text-5xl font-black text-accent">186</p>
-          <p className="text-xl font-bold">day streak</p>
-          <p className="text-sm text-muted">Do not lose your progress. Repair yesterday for 2.99€.</p>
-          <Button full>Repair streak</Button>
-          <button className="text-xs text-muted">Skip and lose streak</button>
+          <p className="text-xl font-bold">{tx(locale, "day streak", "días de racha")}</p>
+          <p className="text-sm text-muted">{tx(locale, "Do not lose your progress. Repair yesterday for 2.99€.", "No pierdas tu progreso. Recupera ayer por 2.99€.")}</p>
+          <Button full>{tx(locale, "Repair streak", "Reparar racha")}</Button>
+          <button className="text-xs text-muted">{tx(locale, "Skip and lose streak", "Saltar y perder racha")}</button>
         </div>
       </PhoneShell>
     </SpecimenFrame>
   ),
-  "paywall-tease": (
-    <SpecimenFrame title="Article paywall tease">
+  "paywall-tease": (locale) => (
+    <SpecimenFrame title={tx(locale, "Article paywall tease", "Cebo de muro de pago")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.article} alt="Newspaper article" />
+        <Photo src={photos.article} alt={tx(locale, "Newspaper article", "Artículo de periódico")} />
         <div className="relative p-5">
-          <Badge tone="neutral">Analysis</Badge>
-          <p className="mt-4 text-3xl font-black">The best privacy tools ranked</p>
+          <Badge tone="neutral">{tx(locale, "Analysis", "Análisis")}</Badge>
+          <p className="mt-4 text-3xl font-black">{tx(locale, "The best privacy tools ranked", "Las mejores herramientas de privacidad")}</p>
           <p className="mt-3 text-sm leading-6 text-muted">
-            We tested twelve products across security, usability, speed, and price. The clear winner surprised our reviewers after...
+            {tx(locale, "We tested twelve products across security, usability, speed, and price. The clear winner surprised our reviewers after...", "Probamos doce productos en seguridad, usabilidad, velocidad y precio. El ganador nos sorprendió...")}
           </p>
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#101010] via-[#101010]/95 to-transparent p-5 pt-20">
-            <Button full>Subscribe to reveal the winner</Button>
+            <Button full>{tx(locale, "Subscribe to reveal the winner", "Suscríbete para descubrir el ganador")}</Button>
           </div>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "anchored-bundling": (
-    <SpecimenFrame title="Bundle pricing anchor">
+  "anchored-bundling": (locale) => (
+    <SpecimenFrame title={tx(locale, "Bundle pricing anchor", "Anclaje de precio en bundle")}>
       <div className="grid gap-3 md:grid-cols-[1fr_1fr_1.25fr]">
-        <MiniProduct name="Editor" price="18€" />
-        <MiniProduct name="Planner" price="18€" />
+        <MiniProduct name={tx(locale, "Editor", "Editor")} price="18€" locale={locale} />
+        <MiniProduct name={tx(locale, "Planner", "Planificador")} price="18€" locale={locale} />
         <div className="border border-accent bg-accent/10 p-5">
-          <Badge tone="warning">Best value</Badge>
-          <p className="mt-4 text-2xl font-black">Complete Suite</p>
-          <p className="mt-2 text-sm text-muted">Editor, Planner, Analytics, Templates</p>
+          <Badge tone="warning">{tx(locale, "Best value", "Mejor valor")}</Badge>
+          <p className="mt-4 text-2xl font-black">{tx(locale, "Complete Suite", "Suite Completa")}</p>
+          <p className="mt-2 text-sm text-muted">{tx(locale, "Editor, Planner, Analytics, Templates", "Editor, Planificador, Analíticas, Plantillas")}</p>
           <p className="mt-5 text-4xl font-black text-accent">29€</p>
-          <p className="mt-2 text-xs uppercase tracking-[0.14em] text-accent">Save 51%</p>
-          <Button full className="mt-5">Choose bundle</Button>
+          <p className="mt-2 text-xs uppercase tracking-[0.14em] text-accent">{tx(locale, "Save 51%", "Ahorra 51%")}</p>
+          <Button full className="mt-5">{tx(locale, "Choose bundle", "Elegir bundle")}</Button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "review-gating": (
-    <SpecimenFrame title="Filtered review flow">
+  "review-gating": (locale) => (
+    <SpecimenFrame title={tx(locale, "Filtered review flow", "Flujo de reseñas filtrado")}>
       <div className="grid gap-4 md:grid-cols-2">
         <div className="border border-white/10 bg-[#101010] p-5">
-          <p className="text-xl font-black">How was your visit?</p>
+          <p className="text-xl font-black">{tx(locale, "How was your visit?", "¿Cómo fue tu visita?")}</p>
           <div className="mt-4 flex gap-1 text-3xl text-accent">★★★★★</div>
-          <Button full className="mt-5">Post on public reviews</Button>
+          <Button full className="mt-5">{tx(locale, "Post on public reviews", "Publicar en reseñas públicas")}</Button>
         </div>
         <div className="border border-white/10 bg-[#101010] p-5">
-          <p className="text-xl font-black">Something wrong?</p>
+          <p className="text-xl font-black">{tx(locale, "Something wrong?", "¿Algo fue mal?")}</p>
           <div className="mt-4 flex gap-1 text-3xl text-muted">★★☆☆☆</div>
-          <button className="mt-5 w-full border border-white/20 py-3 text-sm font-semibold text-paper">Send private feedback</button>
+          <button className="mt-5 w-full border border-white/20 py-3 text-sm font-semibold text-paper">{tx(locale, "Send private feedback", "Enviar comentario privado")}</button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "loyalty-lock-in": (
-    <SpecimenFrame title="Rewards balance">
+  "loyalty-lock-in": (locale) => (
+    <SpecimenFrame title={tx(locale, "Rewards balance", "Saldo de recompensas")}>
       <PhoneShell>
         <div className="space-y-5 p-5 text-center">
-          <p className="text-sm uppercase tracking-[0.18em] text-muted">Reward balance</p>
+          <p className="text-sm uppercase tracking-[0.18em] text-muted">{tx(locale, "Reward balance", "Saldo de puntos")}</p>
           <p className="text-6xl font-black text-accent">940</p>
-          <p className="text-sm text-muted">Only 60 points from a 10€ voucher.</p>
+          <p className="text-sm text-muted">{tx(locale, "Only 60 points from a 10€ voucher.", "A solo 60 puntos de un vale de 10€.")}</p>
           <div className="h-3 overflow-hidden rounded-full bg-white/10">
             <div className="h-full w-[94%] bg-accent" />
           </div>
-          <Button full>Order again to unlock</Button>
-          <p className="text-xs text-muted">Points expire in 5 days.</p>
+          <Button full>{tx(locale, "Order again to unlock", "Pide de nuevo para desbloquear")}</Button>
+          <p className="text-xs text-muted">{tx(locale, "Points expire in 5 days.", "Los puntos caducan en 5 días.")}</p>
         </div>
       </PhoneShell>
     </SpecimenFrame>
   ),
-  "scarcity-ladder": (
-    <SpecimenFrame title="Stacked pressure badges">
+  "scarcity-ladder": (locale) => (
+    <SpecimenFrame title={tx(locale, "Stacked pressure badges", "Insignias de presión apiladas")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.hotel} alt="Hotel suite" />
+        <Photo src={photos.hotel} alt={tx(locale, "Hotel suite", "Suite de hotel")} />
         <div className="space-y-4 p-5">
-          <p className="text-2xl font-black">Suite with balcony</p>
+          <p className="text-2xl font-black">{tx(locale, "Suite with balcony", "Suite con balcón")}</p>
           <div className="flex flex-wrap gap-2">
-            <Badge tone="neutral">Popular choice</Badge>
-            <Badge tone="warning">High demand</Badge>
-            <Badge tone="warning">Only 1 left</Badge>
-            <Badge tone="warning">Price may rise soon</Badge>
+            <Badge tone="neutral">{tx(locale, "Popular choice", "Elección popular")}</Badge>
+            <Badge tone="warning">{tx(locale, "High demand", "Alta demanda")}</Badge>
+            <Badge tone="warning">{tx(locale, "Only 1 left", "Solo queda 1")}</Badge>
+            <Badge tone="warning">{tx(locale, "Price may rise soon", "El precio puede subir pronto")}</Badge>
           </div>
-          <Button full>Book now</Button>
+          <Button full>{tx(locale, "Book now", "Reservar ahora")}</Button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "ai-authority-washing": (
-    <SpecimenFrame title="AI-recommended upsell">
+  "ai-authority-washing": (locale) => (
+    <SpecimenFrame title={tx(locale, "AI-recommended upsell", "Upsell recomendado por IA")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.ai} alt="Abstract AI interface" />
+        <Photo src={photos.ai} alt={tx(locale, "Abstract AI interface", "Interfaz de IA abstracta")} />
         <div className="space-y-4 p-5">
-          <Badge tone="warning">AI recommended</Badge>
-          <p className="text-2xl font-black">Pro Intelligence Plan</p>
-          <p className="text-sm leading-6 text-muted">Our model predicts this plan best matches your growth profile.</p>
-          <div className="border border-accent/40 bg-accent/10 p-3 text-sm text-accent">Fit score: 96%</div>
-          <Button full>Accept recommendation</Button>
+          <Badge tone="warning">{tx(locale, "AI recommended", "Recomendado por IA")}</Badge>
+          <p className="text-2xl font-black">{tx(locale, "Pro Intelligence Plan", "Plan Pro Intelligence")}</p>
+          <p className="text-sm leading-6 text-muted">{tx(locale, "Our model predicts this plan best matches your growth profile.", "Nuestro modelo predice que este plan se ajusta a tu perfil de crecimiento.")}</p>
+          <div className="border border-accent/40 bg-accent/10 p-3 text-sm text-accent">{tx(locale, "Fit score:", "Puntuación:")} 96%</div>
+          <Button full>{tx(locale, "Accept recommendation", "Aceptar recomendación")}</Button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-  "negative-option-billing": (
-    <SpecimenFrame title="Renewal by default">
+  "negative-option-billing": (locale) => (
+    <SpecimenFrame title={tx(locale, "Renewal by default", "Renovación automática")}>
       <div className="border border-white/10 bg-[#101010] p-5">
-        <p className="text-2xl font-black">Membership renewal</p>
-        <p className="mt-3 text-sm leading-6 text-muted">Your annual plan renews automatically on July 29 unless cancelled at least 72 hours before renewal.</p>
+        <p className="text-2xl font-black">{tx(locale, "Membership renewal", "Renovación de membresía")}</p>
+        <p className="mt-3 text-sm leading-6 text-muted">{tx(locale, "Your annual plan renews automatically on July 29 unless cancelled at least 72 hours before renewal.", "Tu plan anual se renueva automáticamente el 29 de julio a menos que lo canceles 72 horas antes.")}</p>
         <div className="mt-5 space-y-3">
-          <CheckedRow label="Keep membership active" />
-          <PriceLine label="Next annual charge" value="149€" />
-          <PriceLine label="Cancellation window" value="Closes soon" muted />
+          <CheckedRow label={tx(locale, "Keep membership active", "Mantener membresía activa")} />
+          <PriceLine label={tx(locale, "Next annual charge", "Próximo cargo anual")} value="149€" />
+          <PriceLine label={tx(locale, "Cancellation window", "Plazo de cancelación")} value={tx(locale, "Closes soon", "Cierra pronto")} muted />
         </div>
-        <Button full className="mt-5">Confirm settings</Button>
+        <Button full className="mt-5">{tx(locale, "Confirm settings", "Confirmar ajustes")}</Button>
       </div>
     </SpecimenFrame>
   ),
-  "survey-to-sales-funnel": (
-    <SpecimenFrame title="Quiz result sales funnel">
+  "survey-to-sales-funnel": (locale) => (
+    <SpecimenFrame title={tx(locale, "Quiz result sales funnel", "Embudo de venta por cuestionario")}>
       <div className="overflow-hidden border border-white/10 bg-[#101010]">
-        <Photo src={photos.beauty} alt="Cosmetic products" />
+        <Photo src={photos.beauty} alt={tx(locale, "Cosmetic products", "Productos cosméticos")} />
         <div className="space-y-4 p-5">
-          <Badge tone="neutral">Personalized result</Badge>
-          <p className="text-2xl font-black">Your skin profile: Dehydrated + stressed</p>
-          <p className="text-sm leading-6 text-muted">Based on 9 answers, we recommend the complete recovery bundle.</p>
+          <Badge tone="neutral">{tx(locale, "Personalized result", "Resultado personalizado")}</Badge>
+          <p className="text-2xl font-black">{tx(locale, "Your skin profile: Dehydrated + stressed", "Tu perfil: Piel deshidratada y estresada")}</p>
+          <p className="text-sm leading-6 text-muted">{tx(locale, "Based on 9 answers, we recommend the complete recovery bundle.", "Basado en 9 respuestas, recomendamos el pack recuperación completa.")}</p>
           <div className="border border-accent/40 bg-accent/10 p-3">
-            <p className="font-black text-accent">Recommended bundle: 89€</p>
-            <p className="text-sm text-muted">Cleanser, serum, cream, mask</p>
+            <p className="font-black text-accent">{tx(locale, "Recommended bundle:", "Pack recomendado:")} 89€</p>
+            <p className="text-sm text-muted">{tx(locale, "Cleanser, serum, cream, mask", "Limpiador, sérum, crema, mascarilla")}</p>
           </div>
-          <Button full>Start recovery plan</Button>
+          <Button full>{tx(locale, "Start recovery plan", "Iniciar plan de recuperación")}</Button>
         </div>
       </div>
     </SpecimenFrame>
   ),
-    "visual-obstruction": (
-    <SpecimenFrame title="Obstructed mobile page">
+    "visual-obstruction": (locale) => (
+    <SpecimenFrame title={tx(locale, "Obstructed mobile page", "Página móvil obstruida")}>
       <PhoneShell>
         <div className="relative min-h-[430px] p-5">
-          <p className="text-2xl font-black">Cancel subscription</p>
-          <p className="mt-3 text-sm leading-6 text-muted">Review your plan and choose how you want to proceed.</p>
-          <button className="mt-40 text-sm text-muted underline">Continue to cancellation</button>
+          <p className="text-2xl font-black">{tx(locale, "Cancel subscription", "Cancelar suscripción")}</p>
+          <p className="mt-3 text-sm leading-6 text-muted">{tx(locale, "Review your plan and choose how you want to proceed.", "Revisa tu plan y elige cómo proceder.")}</p>
+          <button className="mt-40 text-sm text-muted underline">{tx(locale, "Continue to cancellation", "Continuar a cancelación")}</button>
           <div className="absolute inset-x-0 bottom-0 border-t border-accent/40 bg-accent p-4 text-ink">
-            <p className="font-black">Install the app for faster support</p>
-            <p className="mt-1 text-sm">Get plan help, offers, and priority chat.</p>
-            <button className="mt-3 w-full bg-ink py-2 text-sm font-black text-paper">Open app</button>
+            <p className="font-black">{tx(locale, "Install the app for faster support", "Instala la app para soporte más rápido")}</p>
+            <p className="mt-1 text-sm">{tx(locale, "Get plan help, offers, and priority chat.", "Obtén ayuda, ofertas y chat prioritario.")}</p>
+            <button className="mt-3 w-full bg-ink py-2 text-sm font-black text-paper">{tx(locale, "Open app", "Abrir app")}</button>
           </div>
         </div>
       </PhoneShell>
     </SpecimenFrame>
   ),
-  "like-gating": (
-    <SpecimenFrame title="Content locked behind a like">
-      <LikeGateExample />
+  "like-gating": (locale) => (
+    <SpecimenFrame title={tx(locale, "Content locked behind a like", "Contenido bloqueado tras un like")}>
+      <LikeGateExample locale={locale} />
     </SpecimenFrame>
   ),
-  "validation-loop": (
-    <SpecimenFrame title="Like notification feed">
-      <ValidationLoopExample />
+  "validation-loop": (locale) => (
+    <SpecimenFrame title={tx(locale, "Like notification feed", "Feed de notificaciones de likes")}>
+      <ValidationLoopExample locale={locale} />
     </SpecimenFrame>
   ),
-  "reaction-pressure": (
-    <SpecimenFrame title="Emotional engagement bait">
-      <ReactionPressureExample />
+  "reaction-pressure": (locale) => (
+    <SpecimenFrame title={tx(locale, "Emotional engagement bait", "Señuelo emocional de engagement")}>
+      <ReactionPressureExample locale={locale} />
     </SpecimenFrame>
   ),
-  "hard-to-close": (
-    <SpecimenFrame title="Newsletter popup with tiny close target">
-      <HardToCloseExample />
+  "hard-to-close": (locale) => (
+    <SpecimenFrame title={tx(locale, "Newsletter popup with tiny close target", "Popup con botón de cierre minúsculo")}>
+      <HardToCloseExample locale={locale} />
     </SpecimenFrame>
   ),
-  "live-activity-indicator": (
-    <SpecimenFrame title="Live activity feed on a hotel listing">
-      <LiveActivityExample />
+  "live-activity-indicator": (locale) => (
+    <SpecimenFrame title={tx(locale, "Live activity feed on a hotel listing", "Feed de actividad en vivo en hotel")}>
+      <LiveActivityExample locale={locale} />
     </SpecimenFrame>
   ),
 };
 
-export function PatternVisualExample({ pattern }: PatternVisualExampleProps) {
-  return visualExamples[pattern.slug] ?? (
-    <SpecimenFrame title="Interface specimen">
+export function PatternVisualExample({ pattern, locale = "en" }: PatternVisualExampleProps) {
+  const render = visualExamples[pattern.slug];
+  return render ? render(locale) : (
+    <SpecimenFrame title={tx(locale, "Interface specimen", "Espécimen de interfaz")}>
       <p className="text-muted">{pattern.summary}</p>
     </SpecimenFrame>
   );
@@ -741,7 +757,7 @@ function Rating({ value, label }: { value: string; label: string }) {
   );
 }
 
-function Plan({ name, price, description, badge, featured = false }: { name: string; price: string; description: string; badge?: string; featured?: boolean }) {
+function Plan({ name, price, description, badge, featured = false, locale = "en" }: { name: string; price: string; description: string; badge?: string; featured?: boolean; locale?: Locale }) {
   return (
     <div className={`border p-5 ${featured ? "border-accent bg-accent/10" : "border-white/10 bg-[#101010]"}`}>
       <div className="h-7">{badge && <Badge tone="warning">{badge}</Badge>}</div>
@@ -749,7 +765,7 @@ function Plan({ name, price, description, badge, featured = false }: { name: str
       <p className="mt-3 text-4xl font-black">{price}</p>
       <p className="mt-3 text-sm leading-6 text-muted">{description}</p>
       <button className={`mt-5 w-full border py-3 text-sm font-bold ${featured ? "border-accent bg-accent text-ink" : "border-white/20 text-paper"}`}>
-        Choose {name}
+        {locale === "es" ? "Elegir" : "Choose"} {name}
       </button>
     </div>
   );
@@ -794,7 +810,7 @@ function BasketRow({ title, price, badge }: { title: string; price: string; badg
   );
 }
 
-function SearchResult({ title, label, mutedLabel = false }: { title: string; label?: string; mutedLabel?: boolean }) {
+function SearchResult({ title, label, mutedLabel = false, locale = "en" }: { title: string; label?: string; mutedLabel?: boolean; locale?: Locale }) {
   return (
     <article className="border border-white/10 bg-ink p-4">
       <div className="mb-2 flex items-center gap-2">
@@ -802,7 +818,7 @@ function SearchResult({ title, label, mutedLabel = false }: { title: string; lab
         <span className="text-xs text-muted">example.com</span>
       </div>
       <p className="text-lg font-semibold">{title}</p>
-      <p className="mt-1 text-sm text-muted">A carefully formatted result with familiar spacing and link styling.</p>
+      <p className="mt-1 text-sm text-muted">{tx(locale, "A carefully formatted result with familiar spacing and link styling.", "Un resultado con formato cuidado y estilo familiar.")}</p>
     </article>
   );
 }
@@ -829,18 +845,18 @@ function ActivityToast({ name, action }: { name: string; action: string }) {
   );
 }
 
-function MiniProduct({ name, price }: { name: string; price: string }) {
+function MiniProduct({ name, price, locale = "en" }: { name: string; price: string; locale?: Locale }) {
   return (
     <div className="border border-white/10 bg-[#101010] p-5">
       <p className="text-xl font-bold">{name}</p>
       <p className="mt-5 text-4xl font-black">{price}</p>
-      <p className="mt-2 text-sm text-muted">Standalone license</p>
-      <button className="mt-5 w-full border border-white/20 py-3 text-sm font-bold text-paper">Choose</button>
+      <p className="mt-2 text-sm text-muted">{tx(locale, "Standalone license", "Licencia independiente")}</p>
+      <button className="mt-5 w-full border border-white/20 py-3 text-sm font-bold text-paper">{tx(locale, "Choose", "Elegir")}</button>
     </div>
   );
 }
 
-function LikeGateExample() {
+function LikeGateExample({ locale = "en" }: { locale?: Locale }) {
   const [liked, setLiked] = useState(false);
   const [showGate, setShowGate] = useState(false);
   const photo = photos.beauty;
@@ -854,7 +870,7 @@ function LikeGateExample() {
     <div className="overflow-hidden border border-white/10 bg-[#101010]">
       <div className="relative">
         <div className={`relative h-64 w-full overflow-hidden bg-white/10 transition-all duration-700 ${liked ? "" : "blur-xl"}`}>
-          <Image src={photo} alt="Content locked behind like" fill sizes="50vw" className="object-cover" />
+          <Image src={photo} alt={tx(locale, "Content locked behind like", "Contenido bloqueado tras like")} fill sizes="50vw" className="object-cover" />
         </div>
         {!liked && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
@@ -864,16 +880,16 @@ function LikeGateExample() {
             >
               ♥
             </button>
-            <p className="text-sm font-semibold">Tap ♥ to reveal</p>
+            <p className="text-sm font-semibold">{tx(locale, "Tap ♥ to reveal", "Toca ♥ para ver")}</p>
           </div>
         )}
       </div>
       <div className="p-4">
-        <p className="text-lg font-bold">The perfect summer glow</p>
-        <p className="text-sm text-muted">A simple 3-step routine.</p>
+        <p className="text-lg font-bold">{tx(locale, "The perfect summer glow", "El brillo veraniego perfecto")}</p>
+        <p className="text-sm text-muted">{tx(locale, "A simple 3-step routine.", "Una rutina sencilla de 3 pasos.")}</p>
         {showGate && (
           <button className="mt-4 w-full border border-accent/50 bg-accent/10 py-3 text-sm font-semibold text-accent transition hover:bg-accent/20">
-            Share with a friend to unlock the full guide →
+            {tx(locale, "Share with a friend to unlock the full guide →", "Comparte con un amigo para ver la guía completa →")}
           </button>
         )}
       </div>
@@ -881,7 +897,7 @@ function LikeGateExample() {
   );
 }
 
-function ValidationLoopExample() {
+function ValidationLoopExample({ locale = "en" }: { locale?: Locale }) {
   const names = ["Ana", "Mark", "Lucia", "Carlos", "Emma", "James"];
   const [visible, setVisible] = useState(0);
   const [badge, setBadge] = useState(3);
@@ -900,7 +916,7 @@ function ValidationLoopExample() {
     <PhoneShell>
       <div className="relative p-4">
         <div className="mb-4 flex items-center justify-between">
-          <p className="text-lg font-black">Notifications</p>
+          <p className="text-lg font-black">{tx(locale, "Notifications", "Notificaciones")}</p>
           <span className="grid h-6 w-6 place-items-center rounded-full bg-red-500 text-xs font-black text-white">
             {badge}
           </span>
@@ -917,23 +933,27 @@ function ValidationLoopExample() {
               <div className="flex-1">
                 <p className="text-sm">
                   <span className="font-semibold text-paper">{name}</span>{" "}
-                  <span className="text-muted">liked your photo</span>
+                  <span className="text-muted">{tx(locale, "liked your photo", "le gusta tu foto")}</span>
                 </p>
                 <p className="text-xs text-muted">
-                  {i === visible ? "just now" : `${i + 1}m ago`}
+                  {i === visible
+                    ? tx(locale, "just now", "ahora mismo")
+                    : locale === "es"
+                      ? `hace ${i + 1}m`
+                      : `${i + 1}m ago`}
                 </p>
               </div>
               <span className="text-lg text-red-400">♥</span>
             </div>
           ))}
         </div>
-        <p className="mt-4 text-center text-xs text-muted">Pull to refresh</p>
+        <p className="mt-4 text-center text-xs text-muted">{tx(locale, "Pull to refresh", "Desliza para actualizar")}</p>
       </div>
     </PhoneShell>
   );
 }
 
-function ReactionPressureExample() {
+function ReactionPressureExample({ locale = "en" }: { locale?: Locale }) {
   const [likes, setLikes] = useState(142);
   const [liked, setLiked] = useState(false);
   const photo = photos.fitness;
@@ -955,13 +975,13 @@ function ReactionPressureExample() {
   return (
     <div className="overflow-hidden border border-white/10 bg-[#101010]">
       <div className="relative h-48 w-full overflow-hidden bg-white/10">
-        <Image src={photo} alt="Emotional campaign image" fill sizes="50vw" className="object-cover" />
+        <Image src={photo} alt={tx(locale, "Emotional campaign image", "Imagen de campaña emocional")} fill sizes="50vw" className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
       </div>
       <div className="space-y-4 p-4">
         <p className="text-sm leading-6 text-paper">
-          1 like = 1 meal for a child in need.{" "}
-          <span className="text-muted">Show your support.</span>
+          {locale === "es" ? "1 like = 1 comida para un niño." : "1 like = 1 meal for a child in need."}{" "}
+          <span className="text-muted">{tx(locale, "Show your support.", "Muestra tu apoyo.")}</span>
         </p>
         <div className="flex items-center justify-between">
           <button
@@ -975,21 +995,24 @@ function ReactionPressureExample() {
             <span className={`text-lg ${liked ? "animate-pulse" : ""}`}>
               {liked ? "♥" : "♡"}
             </span>
-            Like
+            {tx(locale, "Like", "Me gusta")}
           </button>
           <p className="text-sm text-muted">
-            <span className="font-semibold text-accent">{likes.toLocaleString()}</span> likes
+            <span className="font-semibold text-accent">{likes.toLocaleString()}</span>{" "}
+            {tx(locale, "likes", "Me gusta")}
           </p>
         </div>
         <p className="text-[11px] leading-5 text-muted">
-          &ldquo;Like if you believe every child deserves a future. Every share plants a tree.&rdquo;
+          {locale === "es"
+            ? "&ldquo;Dale like si crees que todo niño merece un futuro. Cada compartir planta un árbol.&rdquo;"
+            : "&ldquo;Like if you believe every child deserves a future. Every share plants a tree.&rdquo;"}
         </p>
       </div>
     </div>
   );
 }
 
-function HardToCloseExample() {
+function HardToCloseExample({ locale = "en" }: { locale?: Locale }) {
   const [closed, setClosed] = useState(false);
   const [misses, setMisses] = useState(0);
   const [showHint, setShowHint] = useState(false);
@@ -1020,8 +1043,12 @@ function HardToCloseExample() {
   if (closed) {
     return (
       <div className="flex flex-col items-center justify-center border border-white/10 bg-[#101010] p-10">
-        <p className="text-lg font-black">Closed!</p>
-        <p className="mt-2 text-sm text-muted">It took you {misses + 1} click{misses > 0 ? "s" : ""} to hit a 4px target.</p>
+        <p className="text-lg font-black">{tx(locale, "Closed!", "¡Cerrado!")}</p>
+        <p className="mt-2 text-sm text-muted">
+          {locale === "es"
+            ? `Te ha costado ${misses + 1} clic${misses > 0 ? "s" : ""} acertar un objetivo de 4 píxeles.`
+            : `It took you ${misses + 1} click${misses > 0 ? "s" : ""} to hit a 4px target.`}
+        </p>
       </div>
     );
   }
@@ -1029,14 +1056,14 @@ function HardToCloseExample() {
   return (
     <div className="relative select-none border border-white/10 bg-[#101010]">
       <div className="bg-ink p-5">
-        <p className="text-xs uppercase tracking-[0.18em] text-muted">Before you go</p>
-        <p className="mt-3 text-2xl font-black">Get 20% off your first order</p>
-        <p className="mt-2 text-sm leading-6 text-muted">Join 15,000 subscribers and receive exclusive access to deals, trends, and premium content.</p>
+        <p className="text-xs uppercase tracking-[0.18em] text-muted">{tx(locale, "Before you go", "Antes de irte")}</p>
+        <p className="mt-3 text-2xl font-black">{tx(locale, "Get 20% off your first order", "Consigue un 20% en tu primer pedido")}</p>
+        <p className="mt-2 text-sm leading-6 text-muted">{tx(locale, "Join 15,000 subscribers and receive exclusive access to deals, trends, and premium content.", "Únete a 15.000 suscriptores y recibe acceso exclusivo a ofertas, tendencias y contenido premium.")}</p>
         <div className="mt-5 space-y-3">
-          <input className="w-full border border-white/10 bg-[#101010] px-3 py-3 text-sm text-paper outline-none" placeholder="your@email.com" readOnly />
-          <button className="w-full bg-accent py-3 text-sm font-black text-ink transition hover:bg-paper">Subscribe</button>
+          <input className="w-full border border-white/10 bg-[#101010] px-3 py-3 text-sm text-paper outline-none" placeholder="email@ejemplo.com" readOnly />
+          <button className="w-full bg-accent py-3 text-sm font-black text-ink transition hover:bg-paper">{tx(locale, "Subscribe", "Suscribirse")}</button>
         </div>
-        <p className="mt-4 text-[11px] leading-5 text-muted">No spam. Unsubscribe anytime.</p>
+        <p className="mt-4 text-[11px] leading-5 text-muted">{tx(locale, "No spam. Unsubscribe anytime.", "Sin spam. Cancela cuando quieras.")}</p>
       </div>
 
       <div className="absolute right-0 top-0">
@@ -1064,21 +1091,21 @@ function HardToCloseExample() {
       <div className="absolute bottom-2 right-2 flex items-center gap-2">
         {misses > 0 && (
           <p className="animate-in text-[10px] text-red-400/70" style={{ animationDuration: "200ms" }}>
-            {misses} miss{misses > 1 ? "es" : ""}
+            {misses} {locale === "es" ? (misses > 1 ? "fallos" : "fallo") : misses > 1 ? "misses" : "miss"}
           </p>
         )}
         <p
           className="cursor-pointer text-[10px] text-muted/40 underline underline-offset-2 hover:text-muted/70"
           onClick={() => setShowHint((p) => !p)}
         >
-          {showHint ? "hide" : "show"} target
+          {showHint ? tx(locale, "hide", "ocultar") : tx(locale, "show", "mostrar")} {tx(locale, "target", "objetivo")}
         </p>
       </div>
     </div>
   );
 }
 
-function LiveActivityExample() {
+function LiveActivityExample({ locale = "en" }: { locale?: Locale }) {
   const [viewers, setViewers] = useState(14);
   const [buyers, setBuyers] = useState(3);
   const [showFakeToast, setShowFakeToast] = useState(false);
@@ -1111,13 +1138,13 @@ function LiveActivityExample() {
   return (
     <div className="overflow-hidden border border-white/10 bg-[#101010]">
       <div className="relative h-44 w-full overflow-hidden bg-white/10">
-        <Image src={photos.hotel} alt="Hotel" fill sizes="50vw" className="object-cover" />
+        <Image src={photos.hotel} alt={tx(locale, "Hotel", "Hotel")} fill sizes="50vw" className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
       </div>
       <div className="space-y-4 p-4">
         <div>
-          <p className="text-lg font-bold">Grand Palace Hotel</p>
-          <p className="text-sm text-muted">City center · 4.2 ⭐ (312 reviews)</p>
+          <p className="text-lg font-bold">{tx(locale, "Grand Palace Hotel", "Gran Hotel Palace")}</p>
+          <p className="text-sm text-muted">{tx(locale, "City center", "Centro ciudad")} · 4.2 ⭐ ({tx(locale, "312 reviews", "312 reseñas")})</p>
         </div>
 
         <div className="flex items-center gap-2 border border-accent/30 bg-accent/10 px-3 py-2">
@@ -1126,7 +1153,7 @@ function LiveActivityExample() {
             <span className="relative inline-flex size-2 rounded-full bg-green-500" />
           </span>
           <span className="text-sm font-semibold text-accent">
-            {viewers} people viewing this
+            {viewers} {tx(locale, "people viewing this", "personas viendo esto")}
           </span>
         </div>
 
@@ -1141,10 +1168,14 @@ function LiveActivityExample() {
         <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
           <div className="h-full w-[12%] rounded-full bg-accent" />
         </div>
-        <p className="text-xs text-muted">{buyers > 0 ? `${buyers} people booked in the last 24h` : "Only 3 rooms left"}</p>
+        <p className="text-xs text-muted">
+          {buyers > 0
+            ? `${buyers} ${tx(locale, "people booked in the last 24h", "personas reservaron en las últimas 24h")}`
+            : tx(locale, "Only 3 rooms left", "Solo quedan 3 habitaciones")}
+        </p>
 
         <button className="w-full bg-accent py-3 text-sm font-black text-ink transition hover:bg-paper">
-          Book now
+          {tx(locale, "Book now", "Reservar ahora")}
         </button>
 
         {showFakeToast && (
@@ -1153,22 +1184,23 @@ function LiveActivityExample() {
               {toastName.charAt(0)}
             </span>
             <p className="text-sm text-muted">
-              <span className="font-semibold text-paper">{toastName}</span> just booked this hotel
+              <span className="font-semibold text-paper">{toastName}</span>{" "}
+              {locale === "es" ? "acaba de reservar este hotel" : "just booked this hotel"}
             </p>
           </div>
         )}
 
         <div className="grid grid-cols-3 gap-1 text-center text-[10px] uppercase tracking-[0.16em] text-muted">
-          <span className="border border-white/10 py-1.5">Social Proof</span>
+          <span className="border border-white/10 py-1.5">{tx(locale, "Social Proof", "Prueba social")}</span>
           <span className="border border-white/10 py-1.5">FOMO</span>
-          <span className="border border-white/10 py-1.5">Urgency</span>
+          <span className="border border-white/10 py-1.5">{tx(locale, "Urgency", "Urgencia")}</span>
         </div>
       </div>
     </div>
   );
 }
 
-function InfiniteScrollFeed() {
+function InfiniteScrollFeed({ locale = "en" }: { locale?: Locale }) {
   const pageSize = 6;
   const [itemCount, setItemCount] = useState(pageSize);
   const [loading, setLoading] = useState(false);
@@ -1201,7 +1233,7 @@ function InfiniteScrollFeed() {
       <div className="grid grid-cols-3 gap-0.5">
         {items.map((src, i) => (
           <div key={i} className="relative aspect-square overflow-hidden bg-white/10">
-            <Image src={src} alt={`Post ${i + 1}`} fill sizes="33vw" className="object-cover" />
+            <Image src={src} alt={tx(locale, `Post ${i + 1}`, `Publicación ${i + 1}`)} fill sizes="33vw" className="object-cover" />
           </div>
         ))}
         {loading &&
@@ -1212,7 +1244,7 @@ function InfiniteScrollFeed() {
       <div ref={sentinelRef} className="h-4" />
       {!hasMore && !loading && (
         <p className="py-4 text-center text-xs uppercase tracking-[0.22em] text-muted">
-          You're all caught up
+          {tx(locale, "You're all caught up", "No hay más contenido")}
         </p>
       )}
     </div>

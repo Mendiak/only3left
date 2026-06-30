@@ -13,7 +13,7 @@ export function SeverityMeter({ severity, compact = false, locale = "en" }: Seve
   const label = localizeToxicity(severity, locale) ?? toxicityLabel(severity);
 
   return (
-    <div className="flex flex-wrap items-center gap-2" aria-label={`Toxicity ${severity} out of 5`}>
+    <div className="flex flex-wrap items-center gap-2" aria-label={locale === "es" ? `Toxicidad ${severity} de 5` : `Toxicity ${severity} out of 5`}>
       <span className={compact ? "text-sm" : "text-lg"} aria-hidden="true">
         {"☠️".repeat(severity)}
         <span className="opacity-25">{"☠️".repeat(5 - severity)}</span>
