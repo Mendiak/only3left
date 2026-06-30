@@ -124,7 +124,7 @@ export function PatternGrid({ patterns, locale = "en" }: PatternGridProps) {
         </div>
 
         <div className="flex items-center justify-between">
-          <p className="text-xs text-muted">
+          <p className="text-xs text-muted" role="status" aria-live="polite">
             {t.showing} {filtered.length} {t.of_total} {patterns.length}
           </p>
           {hasActiveFilters && (

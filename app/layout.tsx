@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { LangSetter } from "@/components/LangSetter";
+import { SkipLink } from "@/components/SkipLink";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -42,8 +44,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} min-h-screen bg-ink font-sans text-paper antialiased`}>
+        <LangSetter />
+        <SkipLink />
         <Header />
-        {children}
+        <div id="main-content" tabIndex={-1}>
+          {children}
+        </div>
         <Footer />
       </body>
     </html>
