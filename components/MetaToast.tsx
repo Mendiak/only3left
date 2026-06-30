@@ -33,12 +33,41 @@ function Message({
   const isES = locale === "es";
   const [countdown, setCountdown] = useState(10);
   const [buttonClicked, setButtonClicked] = useState(false);
+  const [spots, setSpots] = useState(3);
+  const [timer, setTimer] = useState(300);
+  const [expired, setExpired] = useState(false);
 
   useEffect(() => {
-    if (toast.type !== "prize" && toast.type !== "urgency") return;
+    if (toast.type !== "prize") return;
     const t = setInterval(() => {
       setCountdown((c) => (c <= 1 ? 10 : c - 1));
     }, 1000);
+    return () => clearInterval(t);
+  }, [toast.type]);
+
+  useEffect(() => {
+    if (toast.type !== "urgency") return;
+    const t = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          setExpired(true);
+          setTimeout(() => {
+            setExpired(false);
+            setTimer(300);
+          }, 1500);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(t);
+  }, [toast.type]);
+
+  useEffect(() => {
+    if (toast.type !== "urgency") return;
+    const t = setInterval(() => {
+      setSpots(Math.floor(Math.random() * 3) + 1);
+    }, 3500);
     return () => clearInterval(t);
   }, [toast.type]);
 
@@ -78,18 +107,42 @@ function Message({
       );
 
     case "urgency":
+      const minutes = Math.floor(timer / 60);
+      const seconds = timer % 60;
+
+      if (expired) {
+        return (
+          <div className="space-y-2 text-center">
+            <p className="text-sm font-black text-red-500 animate-pulse">
+              {isES ? "⏰ OFERTA TERMINADA" : "⏰ OFFER EXPIRED"}
+            </p>
+            <p className="text-[9px] text-muted/20">
+              {isES ? "(por un momento)" : "(just for a moment)"}
+            </p>
+          </div>
+        );
+      }
+
       return (
         <div className="space-y-2">
-          <p className="text-sm font-black text-red-400">
-            ⚠️ {isES ? "Quedan 3 plazas" : "Only 3 spots left"}
-          </p>
-          <p className="text-xs text-muted">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-black text-red-400">
+              ⚠️ {isES ? `Quedan ${spots} plazas a este precio` : `Only ${spots} spots at this price`}
+            </p>
+          </div>
+          <div className="flex items-center gap-1.5 text-xs">
+            <span className="text-muted/80">⏱</span>
+            <span className="font-black text-red-400 font-mono">
+              {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
+            </span>
+            <span className="text-muted/60">
+              {isES ? "restantes" : "remaining"}
+            </span>
+          </div>
+          <p className="text-[10px] text-muted/40">
             {isES
-              ? `${countdown} personas están viendo esto ahora`
-              : `${countdown} people are viewing this right now`}
-          </p>
-          <p className="text-[9px] text-muted/20">
-            {isES ? "El contador no para de reiniciarse" : "The counter keeps resetting"}
+              ? "* Los tiempos de reacción no afectan a este contador"
+              : "* Reaction times do not affect this counter"}
           </p>
         </div>
       );

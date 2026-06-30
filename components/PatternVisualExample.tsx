@@ -3,6 +3,7 @@
 import { type ReactNode, useState } from "react";
 import type { Pattern } from "@/lib/types";
 import type { Locale } from "@/lib/i18n";
+import { localizePattern } from "@/lib/i18n";
 import { SpecimenFrame, tx } from "./visual/Helpers";
 import { TrapRevealer } from "@/components/TrapRevealer";
 import { FakeScarcityExample, CountdownResetExample, ScarcityLadderExample, DecoyPricingExample, DripPricingExample, ComparisonPreventionExample, FakeDiscountExample, AnchoredBundlingExample, BaitAndSwitchExample, DefaultBiasExample, PreselectedOptionsExample, SneakIntoBasketExample, FrequentlyBoughtTogetherExample } from "./visual/UrgencyPricing";
@@ -153,7 +154,7 @@ export function PatternVisualExample({ pattern, locale = "en" }: PatternVisualEx
           <p className="text-xs uppercase tracking-[0.22em] text-emerald-400">
             {locale === "es" ? "Alternativa ética" : "Ethical alternative"}
           </p>
-          <p className="mt-3 text-sm leading-7 text-emerald-100/80">{pattern.ethicalAlternative}</p>
+          <p className="mt-3 text-sm leading-7 text-emerald-100/80">{localizePattern(pattern, locale as Locale).ethicalAlternative}</p>
           <p className="mt-4 text-[10px] text-emerald-400/30">
             {locale === "es"
               ? "El diseño ético prioriza la autonomía del usuario sobre la conversión."
@@ -161,7 +162,7 @@ export function PatternVisualExample({ pattern, locale = "en" }: PatternVisualEx
           </p>
         </div>
       ) : (
-        <TrapRevealer slug={pattern.slug} locale={locale} title={locale === "en" ? title.en : title.es}>
+        <TrapRevealer slug={pattern.slug} locale={locale}>
           <SpecimenFrame title={locale === "en" ? title.en : title.es}>
             {render(locale)}
           </SpecimenFrame>
