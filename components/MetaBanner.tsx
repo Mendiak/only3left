@@ -47,11 +47,11 @@ export function MetaBanner({ locale = "en" }: { locale?: string }) {
   if (dismissed) return null;
 
   return (
-    <div className="border-b border-accent/10 bg-accent/[0.03] px-4 py-2 text-center">
-      <p className="text-[11px] text-muted/50 inline">{message}</p>
+    <div className="border-b border-white/10 bg-white/[0.03] px-4 py-2.5 text-center">
+      <p className="inline text-xs text-muted/80">{message}</p>
       <button
         onClick={() => { setDismissed(true); try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* ignore */ } }}
-        className="ml-2 text-[11px] text-muted/20 transition hover:text-muted/50"
+        className="ml-2 text-xs text-muted/40 transition hover:text-muted/70"
       >
         ✕
       </button>

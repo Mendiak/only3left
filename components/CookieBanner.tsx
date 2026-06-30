@@ -61,13 +61,13 @@ export function CookieBanner({
         <div className="flex shrink-0 items-center gap-3">
           <button
             onClick={() => { onReject(); setJustActed("reject"); }}
-            className="text-[10px] text-muted/40 transition hover:text-muted/70"
+            className="border border-white/20 px-5 py-2.5 text-sm font-bold text-paper transition hover:bg-white/5"
           >
             {isES ? "Rechazar todo" : "Reject all"}
           </button>
           <button
             onClick={() => { onAccept(); setJustActed("accept"); }}
-            className="bg-accent px-6 py-2.5 text-sm font-black text-ink transition hover:bg-accent/80 active:scale-95"
+            className="bg-accent px-5 py-2.5 text-sm font-bold text-ink transition hover:bg-accent/80 active:scale-95"
           >
             {isES ? "Aceptar todo" : "Accept all"}
           </button>
