@@ -57,8 +57,8 @@ function Message({
           </p>
           {buttonClicked ? (
             <div className="animate-in space-y-2 border border-red-500/30 bg-red-500/10 p-3 text-center">
-              <p className="text-xs font-bold text-red-400">
-                {isES ? "¡ES UN ENGAÑO!" : "IT'S A TRICK!"}
+              <p className="text-xs font-bold text-accent">
+                {isES ? "Iluso..." : "Oh, sweet summer child..."}
               </p>
               <p className="text-[10px] text-muted">
                 {isES
