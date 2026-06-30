@@ -1,5 +1,5 @@
 import { FadeInView } from "@/components/FadeInView";
-import { PatternCard } from "@/components/PatternCard";
+import { PatternGrid } from "@/components/PatternGrid";
 import { patterns } from "@/lib/patterns";
 
 export const metadata = {
@@ -19,13 +19,7 @@ export default function PatternsPage() {
           </p>
         </div>
       </FadeInView>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {patterns.map((pattern, i) => (
-          <FadeInView key={pattern.slug} delay={i * 40}>
-            <PatternCard pattern={pattern} />
-          </FadeInView>
-        ))}
-      </div>
+      <PatternGrid patterns={patterns} />
     </main>
   );
 }
