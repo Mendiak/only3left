@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { LangSetter } from "@/components/LangSetter";
 import { SkipLink } from "@/components/SkipLink";
+import { LayoutClient } from "@/components/LayoutClient";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -47,9 +48,7 @@ export default function RootLayout({
         <LangSetter />
         <SkipLink />
         <Header />
-        <div id="main-content" tabIndex={-1}>
-          {children}
-        </div>
+        <LayoutClient>{children}</LayoutClient>
         <Footer />
       </body>
     </html>

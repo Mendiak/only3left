@@ -79,18 +79,21 @@ export function Photo({ src, alt, small = false }: { src: string; alt: string; s
   );
 }
 
-export function Badge({ children, tone }: { children: ReactNode; tone: "warning" | "neutral" }) {
-  const className = tone === "warning" ? "border-accent/50 bg-accent/15 text-accent" : "border-white/10 bg-white/[0.04] text-muted";
-
-  return <span className={`inline-flex border px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] ${className}`}>{children}</span>;
-}
-
-export function Button({ children, full = false, className = "", ...props }: { children: ReactNode; full?: boolean; className?: string } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+export function Button({ children, full = false, className = "", "aria-label": ariaLabel, ...props }: { children: ReactNode; full?: boolean; className?: string; "aria-label"?: string } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button className={`bg-accent px-4 py-3 text-sm font-black text-ink transition hover:bg-paper ${full ? "w-full" : ""} ${className}`} {...props}>
+    <button
+      className={`bg-accent px-4 py-3 text-sm font-black text-ink transition hover:bg-paper disabled:cursor-not-allowed disabled:opacity-40 ${full ? "w-full" : ""} ${className}`}
+      aria-label={ariaLabel || (typeof children === "string" ? children : undefined)}
+      {...props}
+    >
       {children}
     </button>
   );
+}
+
+export function Badge({ children, tone, "aria-label": ariaLabel }: { children: ReactNode; tone: "warning" | "neutral"; "aria-label"?: string }) {
+  const className = tone === "warning" ? "border-accent/50 bg-accent/15 text-accent" : "border-white/10 bg-white/[0.04] text-muted";
+  return <span className={`inline-flex border px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] ${className}`} aria-label={ariaLabel || (typeof children === "string" ? children : undefined)}>{children}</span>;
 }
 
 export function Rating({ value, label }: { value: string; label: string }) {

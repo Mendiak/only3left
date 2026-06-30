@@ -6,9 +6,11 @@ type FadeInViewProps = {
   children: ReactNode;
   delay?: number;
   className?: string;
+  index?: number;
+  stagger?: number;
 };
 
-export function FadeInView({ children, delay = 0, className = "" }: FadeInViewProps) {
+export function FadeInView({ children, delay = 0, className = "", index = 0, stagger = 0 }: FadeInViewProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -30,14 +32,18 @@ export function FadeInView({ children, delay = 0, className = "" }: FadeInViewPr
     return () => observer.disconnect();
   }, []);
 
+  const totalDelay = delay + index * stagger;
+
   return (
     <div
       ref={ref}
       className={className}
+      role="region"
+      aria-hidden={!visible}
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(24px)",
-        transition: `opacity 0.5s ease-out ${delay}ms, transform 0.5s ease-out ${delay}ms`,
+        transition: `opacity 0.5s ease-out ${totalDelay}ms, transform 0.5s ease-out ${totalDelay}ms`,
       }}
     >
       {children}

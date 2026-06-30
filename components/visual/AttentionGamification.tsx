@@ -309,28 +309,108 @@ export function LiveActivityExample({ locale = "en" }: { locale?: Locale }) {
 }
 
 export function NotificationAddictionExample({ locale = "en" }: { locale?: Locale }) {
-  const apps = locale === "es" ? ["Correo", "Chat", "Tienda", "Juego", "Noticias", "Banco", "Fit", "Nube", "Notas"] : ["Mail", "Chat", "Shop", "Game", "News", "Bank", "Fit", "Cloud", "Notes"];
-  const [badgeIds, setBadgeIds] = useState([0, 1, 2]);
+  const appIcons = ["📧", "💬", "🛒", "🎮", "📰", "🏦", "🏋️", "☁️", "📝"];
+  const appNames = locale === "es"
+    ? ["Correo", "Chat", "Tienda", "Juego", "Noticias", "Banco", "Fit", "Nube", "Notas"]
+    : ["Mail", "Chat", "Shop", "Game", "News", "Bank", "Fit", "Cloud", "Notes"];
+  const msgs = locale === "es"
+    ? ["Nueva oferta", "Mensaje recibido", "Alguien te escribió", "Actualización disponible", "Tu pedido fue enviado", "Tienes un nuevo seguidor", "Recordatorio: cita mañana", "Pago confirmado", "Actividad reciente", "Alerta de seguridad"]
+    : ["New offer", "Message received", "Someone messaged you", "Update available", "Your order was shipped", "New follower", "Reminder: appointment tomorrow", "Payment confirmed", "Recent activity", "Security alert"];
+  const [feed, setFeed] = useState<{ app: number; msg: string; time: string }[]>([]);
+  const [totalCleared, setTotalCleared] = useState(0);
+  const [badgeCounts, setBadgeCounts] = useState<number[]>([3, 2, 1, 0, 0, 0, 0, 0, 0]);
+
   useEffect(() => {
-    const timer = setInterval(() => {
-      setBadgeIds((prev) => {
-        const newId = (prev[prev.length - 1] + 1) % apps.length;
-        return [...prev.slice(1), newId];
+    const interval = setInterval(() => {
+      setBadgeCounts((prev) => {
+        const next = [...prev];
+        next[Math.floor(Math.random() * next.length)] += Math.floor(Math.random() * 3) + 1;
+        return next;
       });
-    }, 3000);
-    return () => clearInterval(timer);
-  }, []);
+      if (feed.length === 0) {
+        const app = Math.floor(Math.random() * appNames.length);
+        setFeed((prev) => [...prev, { app, msg: msgs[Math.floor(Math.random() * msgs.length)], time: `${Math.floor(Math.random() * 10) + 1}m` }]);
+      }
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [feed.length]);
+
+  const openFeed = (appIdx: number) => {
+    const count = badgeCounts[appIdx];
+    const newNotifications: { app: number; msg: string; time: string }[] = [];
+    for (let i = 0; i < Math.min(count, 5); i++) {
+      newNotifications.push({
+        app: appIdx,
+        msg: msgs[Math.floor(Math.random() * msgs.length)],
+        time: `${Math.floor(Math.random() * 10) + 1}m`,
+      });
+    }
+    setFeed((prev) => [...newNotifications, ...prev]);
+    setBadgeCounts((prev) => { const n = [...prev]; n[appIdx] = 0; return n; });
+  };
+
+  if (feed.length > 0) {
+    return (
+      <PhoneShell>
+        <div className="flex items-center justify-between border-b border-white/10 bg-ink p-4">
+          <button onClick={() => { setFeed([]); setTotalCleared((c) => c + feed.length); }} className="text-xs text-muted transition hover:text-paper">
+            ← {locale === "es" ? "Volver" : "Back"}
+          </button>
+          <p className="text-xs text-muted">{feed.length} {locale === "es" ? "notifs" : "notifs"}</p>
+          <button onClick={() => { setFeed([]); setTotalCleared((c) => c + feed.length); }} className="text-xs text-accent">{locale === "es" ? "Limpiar" : "Clear all"}</button>
+        </div>
+        <div className="max-h-[340px] space-y-0 overflow-y-auto">
+          {feed.map((n, i) => (
+            <div key={i} className="flex items-start gap-3 border-b border-white/5 px-4 py-3 transition hover:bg-accent/5">
+              <span className="mt-0.5 text-lg">{appIcons[n.app]}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-paper">{appNames[n.app]}</p>
+                <p className="mt-0.5 truncate text-xs text-muted">{n.msg}</p>
+                <p className="mt-0.5 text-[9px] text-muted/20">{n.time}</p>
+              </div>
+            </div>
+          ))}
+          <div className="p-4 text-center">
+            <p className="text-[9px] text-muted/20">{locale === "es" ? "Más notificaciones al bajar..." : "More notifications on scroll..."}</p>
+          </div>
+        </div>
+        <div className="border-t border-white/10 bg-ink p-2 text-center text-[9px] text-muted/20">
+          {locale === "es" ? `Eliminadas: ${totalCleared}` : `Cleared: ${totalCleared}`}
+        </div>
+      </PhoneShell>
+    );
+  }
+
   return (
     <PhoneShell>
+      <div className="border-b border-white/10 bg-ink px-4 py-3">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-black">{locale === "es" ? "Notificaciones" : "Notifications"}</p>
+          <p className="text-xs text-accent">{badgeCounts.reduce((a, b) => a + b, 0)} {locale === "es" ? "nuevas" : "new"}</p>
+        </div>
+      </div>
       <div className="grid grid-cols-3 gap-4 p-5">
-        {apps.map((item, index) => (
-          <div key={item} className="relative aspect-square rounded-2xl border border-white/10 bg-white/[0.06] p-2 text-xs text-muted">
-            {badgeIds.includes(index) && <span className="absolute -right-2 -top-2 grid h-6 w-6 animate-in place-items-center rounded-full bg-red-500 text-xs font-black text-white">{Math.floor(Math.random() * 9) + 1}</span>}
-            <span className="absolute bottom-2 left-2">{item}</span>
+        {appNames.map((name, i) => (
+          <div
+            key={i}
+            onClick={() => badgeCounts[i] > 0 && openFeed(i)}
+            className={`relative flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border transition ${
+              badgeCounts[i] > 0 ? "border-accent/30 bg-accent/5 hover:bg-accent/10" : "border-white/10 bg-white/[0.06]"
+            }`}
+          >
+            <span className="text-2xl">{appIcons[i]}</span>
+            <span className="text-[10px] text-muted">{name}</span>
+            {badgeCounts[i] > 0 && (
+              <span className="absolute -right-1 -top-1 grid h-5 min-w-5 animate-in place-items-center rounded-full bg-red-500 px-1 text-[10px] font-black text-white">
+                {badgeCounts[i] > 9 ? "9+" : badgeCounts[i]}
+              </span>
+            )}
           </div>
         ))}
       </div>
-      <p className="pb-3 text-center text-[10px] text-muted/30">{locale === "es" ? "Las notificaciones rotan solas" : "Badges rotate automatically"}</p>
+      <p className="pb-3 text-center text-[9px] text-muted/20">
+        {locale === "es" ? "Toque una app con badge → feed infinito" : "Tap a badged app → infinite feed"}
+      </p>
     </PhoneShell>
   );
 }
@@ -392,32 +472,105 @@ export function StreakPressureExample({ locale = "en" }: { locale?: Locale }) {
 }
 
 export function PaywallTeaseExample({ locale = "en" }: { locale?: Locale }) {
-  const [scrollY, setScrollY] = useState(0);
+  const [stage, setStage] = useState<"reading" | "blocked" | "preview" | "reblocked">("reading");
+  const [countdown, setCountdown] = useState(30);
+  const [previewClicks, setPreviewClicks] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const el = contentRef.current;
     if (!el) return;
-    const handleScroll = () => setScrollY(el.scrollTop);
+    const handleScroll = () => {
+      if (el.scrollTop > 60 && stage === "reading") setStage("blocked");
+    };
     el.addEventListener("scroll", handleScroll);
     return () => el.removeEventListener("scroll", handleScroll);
-  }, []);
-  const maxScroll = 200;
-  const revealRatio = Math.min(scrollY / maxScroll, 1);
-  const isBlocked = scrollY > 80;
+  }, [stage]);
+
+  useEffect(() => {
+    if (stage !== "blocked" && stage !== "reblocked") return;
+    if (countdown <= 0) return;
+    const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [stage, countdown]);
+
+  const handlePreview = () => {
+    if (previewClicks >= 3) {
+      setStage("reblocked");
+      setCountdown(30);
+      return;
+    }
+    setStage("preview");
+    setPreviewClicks((c) => c + 1);
+    setTimeout(() => {
+      setStage("blocked");
+      setCountdown(30);
+    }, 2000);
+  };
+
   return (
     <div className="overflow-hidden border border-white/10 bg-[#101010]">
       <Photo src={photos.article} alt="" />
-      <div ref={contentRef} className="relative max-h-[280px] overflow-y-auto p-5">
-        <Badge tone="neutral">{locale === "es" ? "Análisis" : "Analysis"}</Badge>
-        <p className="mt-4 text-3xl font-black">{locale === "es" ? "Mejores herramientas privacidad" : "Best privacy tools ranked"}</p>
-        <p className="mt-3 text-sm leading-6 text-muted">
-          {locale === "es"
-            ? "Probamos doce productos. El ganador nos sorprendió por su relación calidad-precio. Analizamos seguridad, usabilidad, velocidad y precio..."
-            : "We tested twelve products. The winner surprised us with value. We analyzed security, usability, speed, and price..."}
-        </p>
-        {isBlocked && (
-          <div className="sticky bottom-0 left-0 right-0 bg-gradient-to-t from-[#101010] via-[#101010]/95 to-transparent p-4 pt-12">
-            <Button full>{locale === "es" ? "Suscríbete para leer más" : "Subscribe to read more"}</Button>
+      <div ref={contentRef} className="relative max-h-[300px] overflow-y-auto">
+        <div className="p-5 space-y-4">
+          <Badge tone="neutral">{locale === "es" ? "Análisis" : "Analysis"}</Badge>
+          <p className="text-3xl font-black">{locale === "es" ? "Mejores herramientas privacidad" : "Best privacy tools ranked"}</p>
+          <p className="text-sm leading-6 text-muted">
+            {locale === "es"
+              ? "Probamos doce productos. El ganador nos sorprendió por su relación calidad-precio..."
+              : "We tested twelve products. The winner surprised us with value for money..."}
+          </p>
+          <p className="text-sm leading-6 text-muted">
+            {locale === "es"
+              ? "Analizamos seguridad, usabilidad, velocidad y precio durante tres meses."
+              : "We analyzed security, usability, speed, and price over three months."}
+          </p>
+        </div>
+
+        {(stage === "blocked" || stage === "reblocked") && (
+          <div className="sticky bottom-0 left-0 right-0 bg-gradient-to-t from-[#101010] via-[#101010]/95 to-transparent p-4 pt-12 space-y-3">
+            <div className="flex items-center justify-center gap-2 text-xs text-muted/40">
+              <span>⏱</span>
+              <span>{locale === "es" ? "Acceso gratuito en" : "Free access in"} {countdown}s</span>
+            </div>
+            <Button full onClick={handlePreview}>
+              {previewClicks >= 3
+                ? (locale === "es" ? "Suscríbete para leer más" : "Subscribe to read more")
+                : (locale === "es" ? `Vista previa (${3 - previewClicks} restantes)` : `Preview (${3 - previewClicks} left)`)}
+            </Button>
+            {previewClicks < 3 && (
+              <p className="text-center text-[9px] text-muted/20">
+                {locale === "es" ? "O espera a que termine el contador (se reinicia)" : "Or wait for the counter (it resets)"}
+              </p>
+            )}
+          </div>
+        )}
+
+        {stage === "preview" && (
+          <div className="animate-in border-t border-accent/20 bg-accent/5 p-5 space-y-3">
+            <p className="text-xs text-accent font-black uppercase tracking-widest">
+              {locale === "es" ? "Vista previa" : "Preview"}
+            </p>
+            <p className="text-sm leading-6 text-muted">
+              {locale === "es"
+                ? "El producto número uno cuesta 3.99€/mes y ofrece cifrado de extremo a extremo..."
+                : "The number one product costs $3.99/mo and offers end-to-end encryption..."}
+            </p>
+            <p className="text-[10px] text-muted/20">
+              {locale === "es"
+                ? `Vista previa ${previewClicks}/3 — se cerrará en 2 segundos`
+                : `Preview ${previewClicks}/3 — closing in 2 seconds`}
+            </p>
+          </div>
+        )}
+
+        {stage === "reblocked" && (
+          <div className="border-t border-red-500/20 bg-red-500/5 p-3 text-center">
+            <p className="text-xs text-red-400/70">
+              {locale === "es"
+                ? "Vistas previas agotadas. Pero el contador se ha reiniciado. 😉"
+                : "Previews exhausted. But the counter has reset. 😉"}
+            </p>
           </div>
         )}
       </div>

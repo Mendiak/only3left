@@ -250,19 +250,74 @@ export function NegativeOptionBillingExample({ locale = "en" }: { locale?: Local
 }
 
 export function ForcedRegistrationExample({ locale = "en" }: { locale?: Locale }) {
-  const [clicked, setClicked] = useState(false);
+  const [step, setStep] = useState<"initial" | "form" | "done">("initial");
+  const [form, setForm] = useState({ name: "", email: "", password: "", phone: "" });
+  const [errorField, setErrorField] = useState("");
+
+  const handleSubmit = () => {
+    if (!form.name) { setErrorField("name"); return; }
+    if (!form.email) { setErrorField("email"); return; }
+    if (!form.password) { setErrorField("password"); return; }
+    if (!form.phone) { setErrorField("phone"); return; }
+    setStep("done");
+  };
+
+  const update = (field: string, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    setErrorField("");
+  };
+
   return (
-    <div className="grid gap-4 md:grid-cols-[1fr_0.9fr]">
+    <div className="grid gap-4 md:grid-cols-[1fr_1fr]">
       <div className="border border-white/10 bg-[#101010] p-5">
         <p className="text-2xl font-black">{locale === "es" ? "Tu cesta" : "Your basket"}</p>
-        <BasketRow title={locale === "es" ? "Organizador" : "Desk organizer"} price="24€" />
-        <BasketRow title={locale === "es" ? "Libretas" : "Notebook set"} price="12€" />
+        <div className="mt-4 space-y-3">
+          <BasketRow title={locale === "es" ? "Organizador" : "Desk organizer"} price="24€" />
+          <BasketRow title={locale === "es" ? "Libretas" : "Notebook set"} price="12€" />
+        </div>
         <div className="mt-4 flex justify-between border-t border-white/10 pt-4 font-black"><span>{locale === "es" ? "Total" : "Total"}</span><span>36€</span></div>
       </div>
-      <div className={`border p-5 transition-all ${clicked ? "border-accent/40 bg-accent/10" : "border-white/10 bg-[#101010]"}`}>
-        <p className="text-2xl font-black">{clicked ? (locale === "es" ? "Crea tu cuenta" : "Create account") : (locale === "es" ? "¿Listo para pagar?" : "Ready to pay?")}</p>
-        <p className="mt-3 text-sm text-muted">{clicked ? (locale === "es" ? "No hay opción invitado." : "No guest checkout.") : (locale === "es" ? "Casi... pero necesitas registrarte." : "Almost... but you need to register.")}</p>
-        <Button full className="mt-5" onClick={() => setClicked(true)}>{clicked ? (locale === "es" ? "Crear cuenta" : "Create account") : (locale === "es" ? "Pagar como invitado" : "Checkout as guest")}</Button>
+
+      <div className="border border-white/10 bg-[#101010] p-5">
+        {step === "initial" && (
+          <div className="space-y-4">
+            <p className="text-2xl font-black">{locale === "es" ? "¿Listo para pagar?" : "Ready to pay?"}</p>
+            <p className="text-sm text-muted">{locale === "es" ? "Casi... pero necesitas registrarte." : "Almost... but you need to register."}</p>
+            <Button full onClick={() => setStep("form")}>{locale === "es" ? "Pagar como invitado" : "Checkout as guest"}</Button>
+          </div>
+        )}
+
+        {step === "form" && (
+          <div className="space-y-4">
+            <p className="text-2xl font-black">{locale === "es" ? "Crear cuenta" : "Create account"}</p>
+            <p className="text-xs text-muted">{locale === "es" ? "No hay opción de invitado." : "No guest checkout available."}</p>
+            {["name", "email", "password", "phone"].map((field) => (
+              <div key={field}>
+                <input
+                  value={form[field as keyof typeof form]}
+                  onChange={(e) => update(field, e.target.value)}
+                  placeholder={field === "name" ? (locale === "es" ? "Nombre completo" : "Full name") : field === "email" ? "Email" : field === "password" ? (locale === "es" ? "Contraseña" : "Password") : (locale === "es" ? "Teléfono" : "Phone")}
+                  type={field === "password" ? "password" : field === "phone" ? "tel" : "text"}
+                  className={`w-full border bg-ink px-3 py-3 text-sm text-paper outline-none transition ${
+                    errorField === field ? "border-red-500/50 bg-red-500/5" : "border-white/10"
+                  }`}
+                />
+              </div>
+            ))}
+            {errorField && (
+              <p className="animate-in text-xs text-red-400">{locale === "es" ? "El teléfono es obligatorio para el envío." : "Phone is required for delivery."}</p>
+            )}
+            <Button full onClick={handleSubmit}>{locale === "es" ? "Crear cuenta y pagar" : "Create account & pay"}</Button>
+          </div>
+        )}
+
+        {step === "done" && (
+          <div className="space-y-4 text-center">
+            <p className="text-2xl font-black text-accent">{locale === "es" ? "¡Cuenta creada!" : "Account created!"}</p>
+            <p className="text-sm text-muted">{locale === "es" ? "Ahora estás registrado. No había opción invitado." : "You're now registered. There was no guest option."}</p>
+            <p className="text-[10px] text-muted/30">{locale === "es" ? "Bienvenido a nuestra base de datos." : "Welcome to our database."}</p>
+          </div>
+        )}
       </div>
     </div>
   );

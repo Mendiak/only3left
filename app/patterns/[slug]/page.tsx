@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FadeInView } from "@/components/FadeInView";
 import { PatternSidebar } from "@/components/PatternSidebar";
+import { PatternViewTracker } from "@/components/PatternViewTracker";
 import { PatternVisualExample } from "@/components/PatternVisualExample";
+import { ManipulationMeter } from "@/components/ManipulationMeter";
 import { ProgressBar } from "@/components/ProgressBar";
 import { SeverityMeter } from "@/components/SeverityMeter";
 import { getPattern, patterns } from "@/lib/patterns";
@@ -159,6 +161,9 @@ export default async function PatternPage({ params }: PatternPageProps) {
               <div className="mt-5">
                 <SeverityMeter severity={pattern.severity} />
               </div>
+              <div className="mt-6">
+                <ManipulationMeter category={pattern.category} severity={pattern.severity} />
+              </div>
             </section>
           </FadeInView>
 
@@ -167,6 +172,7 @@ export default async function PatternPage({ params }: PatternPageProps) {
               ← Back to Catalogue
             </Link>
           </div>
+          <PatternViewTracker pattern={{ slug: pattern.slug, title: pattern.title, category: pattern.category }} />
         </article>
 
         <aside className="hidden lg:block">

@@ -580,6 +580,38 @@ export const patterns: Pattern[] = [
     ethicalAlternative: "Show verifiable, timestamped activity data when available. Avoid animation that implies urgency without substance. If using aggregated stats, label them clearly as averages or totals.",
     origin: "Travel booking, ecommerce, SaaS landing pages, webinar funnels, and donation platforms.",
   },
+  {
+    slug: "social-cross-sell",
+    title: "Social Cross-Sell",
+    category: "Social Engineering",
+    summary: "Other customers bought this. And this. And this. (Allegedly.)",
+    description:
+      "A product page displays 'Customers who bought this also bought…' recommendations that are engineered for revenue, not relevance — fabricated social proof disguised as helpful discovery.",
+    severity: 3,
+    psychology: ["Social Proof", "Anchoring", "FOMO"],
+    examples: [
+      "A pair of shoes triggers 'Customers also bought premium insoles' from a simulated sample.",
+      "Multiple 'other buyers' are shown as recent notifications alongside cross-sell items.",
+    ],
+    ethicalAlternative: "Show genuinely correlated recommendations based on real purchase data, label them clearly, and avoid implied urgency.",
+    origin: "Ecommerce, checkout pages, SaaS upsells, and post-purchase flows.",
+  },
+  {
+    slug: "frequently-bought-together",
+    title: "Frequently Bought Together",
+    category: "Pricing Manipulation",
+    summary: "Amazon made it famous. Everyone else made it preselected.",
+    description:
+      "A 'frequently bought together' widget pre-selects add-on items so that the total looks reasonable and unchecking requires deliberate effort. The 'you save' math is often inflated by comparing to separate full prices.",
+    severity: 3,
+    psychology: ["Default Bias", "Anchoring", "Cognitive Load"],
+    examples: [
+      "A camera is shown with a pre-checked memory card, case, and extended warranty.",
+      "The bundle total appears with a strikethrough 'you save' that assumes full retail for each item.",
+    ],
+    ethicalAlternative: "Show items individually priced, pre-select nothing, and let users build their own bundle.",
+    origin: "Ecommerce product pages, especially electronics, books, and accessory-heavy categories.",
+  },
 ];
 
 export function getFeaturedPatterns() {

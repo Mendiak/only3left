@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FadeInView } from "@/components/FadeInView";
 import { PatternSidebar } from "@/components/PatternSidebar";
+import { PatternViewTracker } from "@/components/PatternViewTracker";
 import { PatternVisualExample } from "@/components/PatternVisualExample";
+import { ManipulationMeter } from "@/components/ManipulationMeter";
 import { ProgressBar } from "@/components/ProgressBar";
 import { SeverityMeter } from "@/components/SeverityMeter";
 import { localizePattern, ui } from "@/lib/i18n";
@@ -164,6 +166,9 @@ export default async function SpanishPatternPage({ params }: PatternPageProps) {
               <div className="mt-5">
                 <SeverityMeter severity={pattern.severity} locale="es" />
               </div>
+              <div className="mt-6">
+                <ManipulationMeter category={pattern.category} severity={pattern.severity} locale="es" />
+              </div>
             </section>
           </FadeInView>
 
@@ -172,6 +177,7 @@ export default async function SpanishPatternPage({ params }: PatternPageProps) {
               ← Volver al catálogo
             </Link>
           </div>
+          <PatternViewTracker pattern={{ slug: pattern.slug, title: localizePattern(pattern, "es").title, category: localizePattern(pattern, "es").category }} locale="es" />
         </article>
 
         <aside className="hidden lg:block">
