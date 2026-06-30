@@ -5,6 +5,7 @@ import { PatternSidebar } from "@/components/PatternSidebar";
 import { PatternViewTracker } from "@/components/PatternViewTracker";
 import { PatternVisualExample } from "@/components/PatternVisualExample";
 import { ManipulationMeter } from "@/components/ManipulationMeter";
+import { AlsoLike } from "@/components/AlsoLike";
 import { ProgressBar } from "@/components/ProgressBar";
 import { SeverityMeter } from "@/components/SeverityMeter";
 import { getPattern, patterns } from "@/lib/patterns";
@@ -165,6 +166,10 @@ export default async function PatternPage({ params }: PatternPageProps) {
                 <ManipulationMeter category={pattern.category} severity={pattern.severity} />
               </div>
             </section>
+          </FadeInView>
+
+          <FadeInView>
+            <AlsoLike currentSlug={pattern.slug} />
           </FadeInView>
 
           <div className="border-t border-white/10 pt-8">

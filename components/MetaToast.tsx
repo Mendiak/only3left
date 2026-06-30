@@ -172,7 +172,8 @@ export function MetaToast({ locale = "en" }: { locale?: string }) {
       try { sessionStorage.setItem(STORAGE_KEY, "1"); } catch { /* ignore */ }
       return;
     }
-    setTimeout(() => setToast(next), 2000);
+    setToast(null);
+    setTimeout(() => setToast(next), 3000);
   }, [toast]);
 
   useEffect(() => {

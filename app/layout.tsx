@@ -44,6 +44,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="google-site-verification" content="YQRsFuAu9kLLD9W473-R49ZQyvsYI7rhe6cfmgxsOvs" />
+      </head>
       <body className={`${inter.variable} min-h-screen bg-ink font-sans text-paper antialiased`}>
         <LangSetter />
         <SkipLink />
