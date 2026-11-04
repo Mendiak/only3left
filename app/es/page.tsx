@@ -8,15 +8,22 @@ import { PricingTrap } from "@/components/PricingTrap";
 import { categories } from "@/lib/categories";
 import { ui } from "@/lib/i18n";
 import { getFeaturedPatterns } from "@/lib/patterns";
+import { staticPageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Guía de campo sobre UX engañosa",
+export const metadata = staticPageMetadata({
+  path: "/",
+  locale: "es",
+  title: "Patrones oscuros: guía de UX engañosa",
   description:
-    "Un catálogo interactivo de patrones de UX engañosa — nombra, clasifica y entiende la manipulación de interfaces.",
-  openGraph: {
-    locale: "es_ES",
-  },
-};
+    "Un catálogo interactivo de patrones oscuros y UX engañosa — nombra, clasifica y entiende las tácticas de interfaz usadas para influir en tus decisiones.",
+  keywords: [
+    "patrones oscuros",
+    "dark patterns",
+    "UX engañosa",
+    "patrones de diseño engañosos",
+    "ejemplos de patrones oscuros",
+  ],
+});
 
 export default function SpanishHomePage() {
   const featuredPatterns = getFeaturedPatterns();

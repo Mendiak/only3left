@@ -2,15 +2,20 @@ import { categories } from "@/lib/categories";
 import { FadeInView } from "@/components/FadeInView";
 import { localizeCategoryData, localePath, localizePattern } from "@/lib/i18n";
 import { getPatternsByCategory } from "@/lib/patterns";
+import { staticPageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Categorías",
+export const metadata = staticPageMetadata({
+  path: "/categories",
+  locale: "es",
+  title: "Categorías de patrones oscuros",
   description:
-    "10 categorías de patrones de UX engañosa — desde Urgencia y escasez hasta Abuso de confianza y autoridad.",
-  openGraph: {
-    locale: "es_ES",
-  },
-};
+    "Diez categorías de patrones oscuros — desde Urgencia y escasez hasta Abuso de confianza y autoridad — con las tácticas de cada una.",
+  keywords: [
+    "categorías de patrones oscuros",
+    "tipos de dark patterns",
+    "taxonomía de UX engañosa",
+  ],
+});
 
 export default function SpanishCategoriesPage() {
   return (

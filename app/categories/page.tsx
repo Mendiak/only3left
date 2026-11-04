@@ -1,12 +1,20 @@
 import { categories } from "@/lib/categories";
 import { FadeInView } from "@/components/FadeInView";
 import { getPatternsByCategory } from "@/lib/patterns";
+import { staticPageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Categories",
+export const metadata = staticPageMetadata({
+  path: "/categories",
+  locale: "en",
+  title: "Dark Pattern Categories",
   description:
-    "10 categories of deceptive UX patterns — from Urgency & Scarcity to Trust & Authority Abuse.",
-};
+    "Ten categories of dark patterns — from Urgency & Scarcity to Trust & Authority Abuse — with the tactics that belong to each.",
+  keywords: [
+    "dark pattern categories",
+    "types of dark patterns",
+    "deceptive UX taxonomy",
+  ],
+});
 
 export default function CategoriesPage() {
   return (

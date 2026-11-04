@@ -1,15 +1,21 @@
 import { FadeInView } from "@/components/FadeInView";
 import { PatternGrid } from "@/components/PatternGrid";
 import { patterns } from "@/lib/patterns";
+import { staticPageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Patrones",
+export const metadata = staticPageMetadata({
+  path: "/patterns",
+  locale: "es",
+  title: "Ejemplos de patrones oscuros: catálogo completo",
   description:
-    "Un archivo de 40 patrones de UX engañosa — tácticas de interfaz que presionan, ocultan, distraen o preseleccionan en silencio.",
-  openGraph: {
-    locale: "es_ES",
-  },
-};
+    "Un archivo de 40 patrones oscuros y tácticas de UX engañosa que presionan, ocultan, distraen o preseleccionan. Ejemplos, psicología y alternativas éticas.",
+  keywords: [
+    "ejemplos de patrones oscuros",
+    "lista de dark patterns",
+    "patrones de diseño engañosos",
+    "catálogo de patrones oscuros",
+  ],
+});
 
 export default function SpanishPatternsPage() {
   return (

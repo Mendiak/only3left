@@ -7,11 +7,22 @@ import { PatternCard } from "@/components/PatternCard";
 import { PricingTrap } from "@/components/PricingTrap";
 import { categories } from "@/lib/categories";
 import { getFeaturedPatterns } from "@/lib/patterns";
+import { staticPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = staticPageMetadata({
+  path: "/",
+  locale: "en",
+  title: "Dark Patterns Catalogue",
   description:
-    "An interactive catalogue of deceptive UX patterns — name, classify, and understand interface manipulation.",
-};
+    "An interactive catalogue of dark patterns and deceptive UX techniques — name, classify, and understand the interface tricks used to influence decisions online.",
+  keywords: [
+    "dark patterns",
+    "deceptive UX",
+    "dark pattern catalogue",
+    "dark pattern examples",
+    "UX manipulation",
+  ],
+});
 
 export default function HomePage() {
   const featuredPatterns = getFeaturedPatterns();

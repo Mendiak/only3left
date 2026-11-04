@@ -1,10 +1,14 @@
 import { FadeInView } from "@/components/FadeInView";
+import { staticPageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "About",
+export const metadata = staticPageMetadata({
+  path: "/about",
+  locale: "en",
+  title: "About the Dark Patterns Archive",
   description:
-    "ONLY 3 LEFT™ is an educational field guide documenting deceptive UX patterns as interface specimens.",
-};
+    "ONLY 3 LEFT™ is an educational field guide documenting dark patterns and deceptive UX as interface specimens: named, classified, explained.",
+  keywords: ["dark patterns archive", "deceptive UX education", "ONLY 3 LEFT"],
+});
 
 export default function AboutPage() {
   return (

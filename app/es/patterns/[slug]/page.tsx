@@ -4,12 +4,14 @@ import { FadeInView } from "@/components/FadeInView";
 import { PatternSidebar } from "@/components/PatternSidebar";
 import { PatternViewTracker } from "@/components/PatternViewTracker";
 import { PatternVisualExample } from "@/components/PatternVisualExample";
+import { PatternFaqSection } from "@/components/PatternFaqSection";
 import { ManipulationMeter } from "@/components/ManipulationMeter";
 import { AlsoLike } from "@/components/AlsoLike";
 import { ProgressBar } from "@/components/ProgressBar";
 import { SeverityMeter } from "@/components/SeverityMeter";
 import { localizePattern, ui } from "@/lib/i18n";
 import { getPattern, patterns } from "@/lib/patterns";
+import { jsonLdScript, patternJsonLd, patternMetadata } from "@/lib/seo";
 
 type PatternPageProps = {
   params: Promise<{
@@ -29,22 +31,7 @@ export async function generateMetadata({ params }: PatternPageProps) {
     return { title: "Patrón no encontrado" };
   }
 
-  const displayPattern = localizePattern(pattern, "es");
-
-  return {
-    title: displayPattern.title,
-    description: displayPattern.summary,
-    openGraph: {
-      title: `${displayPattern.title} — ONLY 3 LEFT™`,
-      description: displayPattern.summary,
-      type: "article",
-      locale: "es_ES",
-    },
-    twitter: {
-      title: `${displayPattern.title} — ONLY 3 LEFT™`,
-      description: displayPattern.summary,
-    },
-  };
+  return patternMetadata(pattern, "es");
 }
 
 export default async function SpanishPatternPage({ params }: PatternPageProps) {
@@ -59,6 +46,10 @@ export default async function SpanishPatternPage({ params }: PatternPageProps) {
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(patternJsonLd(pattern, "es")) }}
+      />
       <ProgressBar />
 
       <nav className="mb-6 text-xs uppercase tracking-[0.2em] text-muted" aria-label="Navegación">
@@ -92,8 +83,9 @@ export default async function SpanishPatternPage({ params }: PatternPageProps) {
                 <h2 className="text-2xl font-semibold">{ui.es.howItWorks}</h2>
               </div>
               <p className="mt-4 text-lg leading-8 text-muted">
-                El patrón cambia el coste de pensar: hace que la acción preferida sea inmediata, emocional o visualmente dominante, mientras
-                vuelve la alternativa más lenta, discreta o fácil de dudar.
+                {displayPattern.title} hace que la acción preferida sea inmediata, emocional o visualmente dominante apoyándose en{" "}
+                {displayPattern.psychology.join(", ").toLowerCase()}. La alternativa sigue disponible, solo que más lenta, discreta o fácil de
+                dudar.
               </p>
             </section>
           </FadeInView>
@@ -171,6 +163,10 @@ export default async function SpanishPatternPage({ params }: PatternPageProps) {
                 <ManipulationMeter category={pattern.category} severity={pattern.severity} locale="es" />
               </div>
             </section>
+          </FadeInView>
+
+          <FadeInView>
+            <PatternFaqSection pattern={pattern} locale="es" />
           </FadeInView>
 
           <FadeInView>

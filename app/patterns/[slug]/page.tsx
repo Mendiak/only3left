@@ -4,11 +4,13 @@ import { FadeInView } from "@/components/FadeInView";
 import { PatternSidebar } from "@/components/PatternSidebar";
 import { PatternViewTracker } from "@/components/PatternViewTracker";
 import { PatternVisualExample } from "@/components/PatternVisualExample";
+import { PatternFaqSection } from "@/components/PatternFaqSection";
 import { ManipulationMeter } from "@/components/ManipulationMeter";
 import { AlsoLike } from "@/components/AlsoLike";
 import { ProgressBar } from "@/components/ProgressBar";
 import { SeverityMeter } from "@/components/SeverityMeter";
 import { getPattern, patterns } from "@/lib/patterns";
+import { jsonLdScript, patternJsonLd, patternMetadata } from "@/lib/seo";
 
 type PatternPageProps = {
   params: Promise<{
@@ -29,19 +31,7 @@ export async function generateMetadata({ params }: PatternPageProps) {
     return { title: "Pattern not found" };
   }
 
-  return {
-    title: pattern.title,
-    description: pattern.summary,
-    openGraph: {
-      title: `${pattern.title} — ONLY 3 LEFT™`,
-      description: pattern.summary,
-      type: "article",
-    },
-    twitter: {
-      title: `${pattern.title} — ONLY 3 LEFT™`,
-      description: pattern.summary,
-    },
-  };
+  return patternMetadata(pattern, "en");
 }
 
 export default async function PatternPage({ params }: PatternPageProps) {
@@ -54,6 +44,10 @@ export default async function PatternPage({ params }: PatternPageProps) {
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(patternJsonLd(pattern, "en")) }}
+      />
       <ProgressBar />
 
       <nav className="mb-6 text-xs uppercase tracking-[0.2em] text-muted" aria-label="Breadcrumb">
@@ -87,8 +81,8 @@ export default async function PatternPage({ params }: PatternPageProps) {
                 <h2 id="how-it-works" className="text-2xl font-semibold">How it works</h2>
               </div>
               <p className="mt-4 text-lg leading-8 text-muted">
-                The pattern changes the cost of thinking. It makes the preferred action immediate, emotionally charged, or visually dominant,
-                while making the more reflective action slower, duller, or easier to doubt.
+                {pattern.title} makes the preferred action immediate, emotionally charged, or visually dominant by leaning on{" "}
+                {pattern.psychology.join(", ").toLowerCase()}. The alternative stays available, just slower, duller, or easier to doubt.
               </p>
             </section>
           </FadeInView>
@@ -166,6 +160,10 @@ export default async function PatternPage({ params }: PatternPageProps) {
                 <ManipulationMeter category={pattern.category} severity={pattern.severity} />
               </div>
             </section>
+          </FadeInView>
+
+          <FadeInView>
+            <PatternFaqSection pattern={pattern} />
           </FadeInView>
 
           <FadeInView>

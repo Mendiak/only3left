@@ -1,12 +1,21 @@
 import { FadeInView } from "@/components/FadeInView";
 import { PatternGrid } from "@/components/PatternGrid";
 import { patterns } from "@/lib/patterns";
+import { staticPageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Patterns",
+export const metadata = staticPageMetadata({
+  path: "/patterns",
+  locale: "en",
+  title: "Dark Pattern Examples: The Full Catalogue",
   description:
-    "A working archive of 40 deceptive UX patterns — interface tactics that pressure, obscure, distract, or quietly preselect.",
-};
+    "A working archive of 40 dark patterns — interface tactics that pressure, obscure, distract, or quietly preselect. Examples, psychology, and ethical fixes.",
+  keywords: [
+    "dark pattern examples",
+    "list of dark patterns",
+    "deceptive design patterns",
+    "dark patterns catalogue",
+  ],
+});
 
 export default function PatternsPage() {
   return (

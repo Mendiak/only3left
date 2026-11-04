@@ -1,23 +1,20 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import { patterns } from "@/lib/patterns";
+import { getPattern, patterns } from "@/lib/patterns";
 import { localizePattern } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 
+// Deterministic and server-rendered so crawlers always see the internal links.
 export function AlsoLike({ currentSlug, locale = "en" }: { currentSlug: string; locale?: Locale }) {
-  const [suggestions, setSuggestions] = useState<ReturnType<typeof localizePattern>[]>([]);
-
-  useEffect(() => {
-    const current = patterns.find((p) => p.slug === currentSlug);
-    const sameCategory = patterns.filter(
-      (p) => p.slug !== currentSlug && p.category === current?.category
-    );
-    const pool = sameCategory.length >= 3 ? sameCategory : patterns.filter((p) => p.slug !== currentSlug);
-    const shuffled = [...pool].sort(() => Math.random() - 0.5);
-    setSuggestions(shuffled.slice(0, 3).map((p) => localizePattern(p, locale as Locale)));
-  }, [currentSlug, locale]);
+  const current = getPattern(currentSlug);
+  const sameCategory = patterns.filter(
+    (p) => p.slug !== currentSlug && p.category === current?.category
+  );
+  const remaining = patterns.filter(
+    (p) => p.slug !== currentSlug && p.category !== current?.category
+  );
+  const suggestions = [...sameCategory, ...remaining]
+    .slice(0, 3)
+    .map((p) => localizePattern(p, locale));
 
   if (suggestions.length === 0) return null;
 

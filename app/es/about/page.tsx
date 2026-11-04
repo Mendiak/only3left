@@ -1,13 +1,14 @@
 import { FadeInView } from "@/components/FadeInView";
+import { staticPageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Acerca",
+export const metadata = staticPageMetadata({
+  path: "/about",
+  locale: "es",
+  title: "Acerca del archivo de patrones oscuros",
   description:
-    "ONLY 3 LEFT™ es una guía de campo educativa que documenta patrones de UX engañosa como especímenes de interfaz.",
-  openGraph: {
-    locale: "es_ES",
-  },
-};
+    "ONLY 3 LEFT™ es una guía de campo educativa que documenta patrones oscuros y UX engañosa como especímenes de interfaz: nombrados, clasificados y explicados.",
+  keywords: ["patrones oscuros", "UX engañosa", "educación en diseño ético"],
+});
 
 export default function SpanishAboutPage() {
   return (
