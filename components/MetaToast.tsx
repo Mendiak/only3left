@@ -103,10 +103,16 @@ function Message({
                   ? "Nunca fuiste el visitante 1000. El contador solo existe para que sientas urgencia y hagas clic sin pensar."
                   : "You were never visitor #1000. The counter only exists to create urgency so you click without thinking."}
               </p>
+              <button
+                onClick={onClose}
+                className="w-full border border-white/15 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted transition hover:border-accent/50 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                {isES ? "Entendido" : "Got it"}
+              </button>
             </div>
           ) : (
             <button
-              onClick={() => { setButtonClicked(true); setTimeout(onClose, 2000); }}
+              onClick={() => setButtonClicked(true)}
               className="w-full border border-accent/30 bg-accent/10 py-2 text-xs font-bold text-accent transition hover:bg-accent/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               {isES ? "Reclamar" : "Claim prize"}
