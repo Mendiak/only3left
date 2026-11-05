@@ -62,7 +62,7 @@ const config: Config = {
         "dot-blink": "dot-blink 1.2s ease-in-out infinite",
         "stock-drop": "stock-drop 1.5s ease-out forwards",
         "fade-in": "fade-in 0.4s ease-out",
-        "fade-in-up": "fade-in-up 0.5s ease-out forwards",
+        "fade-in-up": "fade-in-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both",
         "scale-in": "scale-in 0.3s ease-out",
         shimmer: "shimmer 1.5s ease-in-out infinite",
         "card-glow": "card-glow 3s ease-in-out infinite",

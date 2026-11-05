@@ -15,10 +15,15 @@ export function Hero({ locale = "en" }: HeroProps) {
       <div className="mx-auto grid min-h-[72vh] max-w-6xl content-center gap-10 px-5 py-20 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:py-28">
         <div className="animate-fade-in-up">
           <p className="mb-5 text-xs uppercase tracking-[0.34em] text-muted">{copy.heroTagline}</p>
-          <h1 className="max-w-4xl text-5xl font-black leading-none tracking-normal text-paper sm:text-7xl lg:text-8xl">
+          {/*
+            The brand wordmark is decorative from a search perspective: nobody
+            searches for it yet. The h1 carries the query the page can win
+            ("dark patterns"), while the visual hierarchy stays identical.
+          */}
+          <p className="max-w-4xl text-5xl font-black leading-none tracking-normal text-paper sm:text-7xl lg:text-8xl">
             ONLY 3 LEFT™
-          </h1>
-          <p className="mt-5 text-2xl text-accent sm:text-3xl">{copy.heroSubtitle}</p>
+          </p>
+          <h1 className="mt-5 text-2xl text-accent sm:text-3xl">{copy.heroSubtitle}</h1>
           <p className="mt-7 max-w-2xl text-lg leading-8 text-muted">
             {copy.heroText}
           </p>

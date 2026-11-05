@@ -1,8 +1,9 @@
+import Link from "next/link";
 import { categories } from "@/lib/categories";
 import { FadeInView } from "@/components/FadeInView";
 import { localizeCategoryData, localePath, localizePattern } from "@/lib/i18n";
 import { getPatternsByCategory } from "@/lib/patterns";
-import { staticPageMetadata } from "@/lib/seo";
+import { categoriesJsonLd, jsonLdScript, staticPageMetadata } from "@/lib/seo";
 
 export const metadata = staticPageMetadata({
   path: "/categories",
@@ -20,6 +21,10 @@ export const metadata = staticPageMetadata({
 export default function SpanishCategoriesPage() {
   return (
     <main className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(categoriesJsonLd("es")) }}
+      />
       <FadeInView>
         <div className="mb-10">
           <div className="h-px w-full editorial-rule-full" />
@@ -41,17 +46,27 @@ export default function SpanishCategoriesPage() {
               <section id={category.slug} className="scroll-mt-24 border border-white/10 bg-surface p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5">
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
                   <div>
-                    <h2 className="text-2xl font-semibold">{displayCategory.title}</h2>
+                    <h2 className="text-2xl font-semibold">
+                      <Link href={localePath("es", `/categories/${category.slug}`)} className="transition hover:text-accent">
+                        {displayCategory.title}
+                      </Link>
+                    </h2>
                     <p className="mt-3 max-w-2xl leading-7 text-muted">{displayCategory.description}</p>
+                    <Link
+                      href={localePath("es", `/categories/${category.slug}`)}
+                      className="mt-3 inline-block text-xs uppercase tracking-[0.18em] text-accent transition hover:text-paper"
+                    >
+                      Leer la guía de la categoría →
+                    </Link>
                   </div>
                   <span className="text-sm uppercase tracking-[0.22em] text-accent">{categoryPatterns.length} patrones</span>
                 </div>
                 {categoryPatterns.length > 0 && (
                   <div className="mt-6 flex flex-wrap gap-2">
                     {categoryPatterns.map((pattern) => (
-                      <a key={pattern.slug} href={localePath("es", `/patterns/${pattern.slug}`)} className="border border-white/10 px-3 py-2 text-sm text-paper transition-all duration-200 hover:scale-105 hover:border-accent hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
+                      <Link key={pattern.slug} href={localePath("es", `/patterns/${pattern.slug}`)} className="border border-white/10 px-3 py-2 text-sm text-paper transition-all duration-200 hover:scale-105 hover:border-accent hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
                         {localizePattern(pattern, "es").title}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 )}

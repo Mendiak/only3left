@@ -1,6 +1,4 @@
-"use client";
-
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 type FadeInViewProps = {
   children: ReactNode;
@@ -10,41 +8,22 @@ type FadeInViewProps = {
   stagger?: number;
 };
 
+/**
+ * Entrance animation only.
+ *
+ * The previous version started at opacity:0 and flipped to visible through an
+ * IntersectionObserver, setting aria-hidden={!visible}. Because Googlebot lays
+ * the page out without scrolling, every section below the fold stayed invisible
+ * and hidden from assistive tech. Here the content is always in the DOM, always
+ * visible, and the animation is pure CSS so it still runs when JS is disabled.
+ */
 export function FadeInView({ children, delay = 0, className = "", index = 0, stagger = 0 }: FadeInViewProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
   const totalDelay = delay + index * stagger;
 
   return (
     <div
-      ref={ref}
-      className={className}
-      role="region"
-      aria-hidden={!visible}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(24px)",
-        transition: `opacity 0.5s ease-out ${totalDelay}ms, transform 0.5s ease-out ${totalDelay}ms`,
-      }}
+      className={["animate-fade-in-up", className].filter(Boolean).join(" ")}
+      style={totalDelay > 0 ? { animationDelay: `${totalDelay}ms` } : undefined}
     >
       {children}
     </div>

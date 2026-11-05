@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { categories } from "@/lib/categories";
 import { patterns } from "@/lib/patterns";
 import { CONTENT_UPDATED, absoluteUrl, localePath } from "@/lib/seo";
 
@@ -10,8 +11,9 @@ const staticPages: Array<{
   changeFrequency: ChangeFrequency;
 }> = [
   { path: "/", priority: 1, changeFrequency: "weekly" },
+  { path: "/dark-patterns", priority: 0.95, changeFrequency: "monthly" },
   { path: "/patterns", priority: 0.9, changeFrequency: "weekly" },
-  { path: "/categories", priority: 0.7, changeFrequency: "monthly" },
+  { path: "/categories", priority: 0.8, changeFrequency: "monthly" },
   { path: "/about", priority: 0.5, changeFrequency: "yearly" },
 ];
 
@@ -40,10 +42,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entry(page.path, "es", page.priority, page.changeFrequency),
   ]);
 
+  const categoryEntries = categories.flatMap((category) => [
+    entry(`/categories/${category.slug}`, "en", 0.75, "monthly"),
+    entry(`/categories/${category.slug}`, "es", 0.75, "monthly"),
+  ]);
+
   const patternEntries = patterns.flatMap((pattern) => [
     entry(`/patterns/${pattern.slug}`, "en", 0.8, "monthly"),
     entry(`/patterns/${pattern.slug}`, "es", 0.8, "monthly"),
   ]);
 
-  return [...staticEntries, ...patternEntries];
+  return [...staticEntries, ...categoryEntries, ...patternEntries];
 }

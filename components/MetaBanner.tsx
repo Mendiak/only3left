@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 const SESSION_KEY = "only3left-banner-dismissed";
+const ROTATE_MS = 6000;
 
 const banners = {
   en: [
@@ -30,31 +31,72 @@ const banners = {
 
 export function MetaBanner({ locale = "en" }: { locale?: string }) {
   const [dismissed, setDismissed] = useState(false);
-  const [message, setMessage] = useState("");
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
   const pathname = usePathname();
 
+  const messages = banners[locale as keyof typeof banners] ?? banners.en;
+
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (sessionStorage.getItem(SESSION_KEY)) {
-      setDismissed(true);
-      return;
+    try {
+      if (sessionStorage.getItem(SESSION_KEY)) setDismissed(true);
+    } catch {
+      /* storage unavailable */
     }
-    const msgs = banners[locale as keyof typeof banners] ?? banners.en;
-    setMessage(msgs[Math.floor(Math.random() * msgs.length)]);
-    setDismissed(false);
+  }, []);
+
+  // Each navigation restarts the rotation so the first message is predictable.
+  useEffect(() => {
+    setIndex(0);
   }, [pathname, locale]);
+
+  useEffect(() => {
+    if (dismissed || paused) return;
+
+    const timer = window.setInterval(() => {
+      setIndex((current) => (current + 1) % messages.length);
+    }, ROTATE_MS);
+
+    return () => window.clearInterval(timer);
+  }, [dismissed, paused, messages.length]);
 
   if (dismissed) return null;
 
   return (
-    <div className="border-b border-white/10 bg-white/[0.03] px-4 py-2.5 text-center">
-      <p className="inline text-xs text-muted/80">{message}</p>
-      <button
-        onClick={() => { setDismissed(true); try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* ignore */ } }}
-        className="ml-2 text-xs text-muted/40 transition hover:text-muted/70"
-      >
-        ✕
-      </button>
+    <div
+      className="border-b border-white/10 bg-white/[0.03]"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
+    >
+      <div className="mx-auto flex min-h-11 max-w-6xl items-center justify-center gap-3 px-4 py-2">
+        {/*
+          The message container keeps a stable height and the text is swapped in
+          place with a keyed fade, so rotation never shifts the page layout.
+          No aria-live: a rotating region would re-announce every 6 seconds.
+        */}
+        <p className="flex-1 text-center text-xs leading-5 text-muted/80">
+          <span key={index} className="motion-safe:animate-fade-in inline-block">
+            {messages[index]}
+          </span>
+        </p>
+        <button
+          type="button"
+          onClick={() => {
+            setDismissed(true);
+            try {
+              sessionStorage.setItem(SESSION_KEY, "1");
+            } catch {
+              /* storage unavailable */
+            }
+          }}
+          aria-label={locale === "es" ? "Cerrar este aviso" : "Dismiss this banner"}
+          className="shrink-0 rounded p-1 text-xs text-muted/40 transition hover:text-muted/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          ✕
+        </button>
+      </div>
     </div>
   );
 }

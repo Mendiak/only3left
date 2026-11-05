@@ -7,9 +7,13 @@ import { PatternVisualExample } from "@/components/PatternVisualExample";
 import { PatternFaqSection } from "@/components/PatternFaqSection";
 import { ManipulationMeter } from "@/components/ManipulationMeter";
 import { AlsoLike } from "@/components/AlsoLike";
+import { LongformSection } from "@/components/LongformSection";
+import { ReferenceList } from "@/components/ReferenceList";
+import { hasLongform } from "@/lib/longform";
 import { ProgressBar } from "@/components/ProgressBar";
 import { SeverityMeter } from "@/components/SeverityMeter";
 import { getPattern, patterns } from "@/lib/patterns";
+import { slugify } from "@/lib/utils";
 import { jsonLdScript, patternJsonLd, patternMetadata } from "@/lib/seo";
 
 type PatternPageProps = {
@@ -53,13 +57,22 @@ export default async function PatternPage({ params }: PatternPageProps) {
       <nav className="mb-6 text-xs uppercase tracking-[0.2em] text-muted" aria-label="Breadcrumb">
         <Link href="/patterns" className="transition hover:text-paper">Patterns</Link>
         <span className="mx-2">→</span>
-        <span className="text-accent">{pattern.category}</span>
+        <Link
+          href={`/categories/${slugify(pattern.category)}`}
+          className="text-accent transition hover:text-paper"
+        >
+          {pattern.category}
+        </Link>
       </nav>
 
       <div className="lg:grid lg:grid-cols-[1fr_14rem] lg:gap-12">
         <article>
           <header className="border-b border-white/10 pb-10">
-            <p className="text-xs uppercase tracking-[0.28em] text-accent">{pattern.category}</p>
+            <p className="text-xs uppercase tracking-[0.28em] text-accent">
+              <Link href={`/categories/${slugify(pattern.category)}`} className="transition hover:text-paper">
+                {pattern.category}
+              </Link>
+            </p>
             <h1 className="mt-4 text-4xl font-black sm:text-6xl">{pattern.title}</h1>
             <p className="mt-6 text-xl leading-9 text-muted">{pattern.summary}</p>
           </header>
@@ -73,6 +86,10 @@ export default async function PatternPage({ params }: PatternPageProps) {
               <p className="mt-4 text-lg leading-8 text-muted">{pattern.description}</p>
             </section>
           </FadeInView>
+
+          <div className="py-10">
+            <LongformSection slug={pattern.slug} locale="en" />
+          </div>
 
           <FadeInView>
             <section className="border-b border-white/10 py-10" aria-labelledby="how-it-works">
@@ -165,6 +182,10 @@ export default async function PatternPage({ params }: PatternPageProps) {
           <FadeInView>
             <PatternFaqSection pattern={pattern} />
           </FadeInView>
+
+          {!hasLongform(pattern.slug) && (
+            <ReferenceList ids={["brignull", "mathur2019", "gray2018"]} locale="en" />
+          )}
 
           <FadeInView>
             <AlsoLike currentSlug={pattern.slug} />

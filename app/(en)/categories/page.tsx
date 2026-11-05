@@ -1,7 +1,8 @@
+import Link from "next/link";
 import { categories } from "@/lib/categories";
 import { FadeInView } from "@/components/FadeInView";
 import { getPatternsByCategory } from "@/lib/patterns";
-import { staticPageMetadata } from "@/lib/seo";
+import { categoriesJsonLd, jsonLdScript, staticPageMetadata } from "@/lib/seo";
 
 export const metadata = staticPageMetadata({
   path: "/categories",
@@ -19,6 +20,10 @@ export const metadata = staticPageMetadata({
 export default function CategoriesPage() {
   return (
     <main className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(categoriesJsonLd("en")) }}
+      />
       <FadeInView>
         <div className="mb-10">
           <div className="h-px w-full editorial-rule-full" />
@@ -39,17 +44,27 @@ export default function CategoriesPage() {
               <section id={category.slug} className="scroll-mt-24 border border-white/10 bg-surface p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5">
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
                   <div>
-                    <h2 className="text-2xl font-semibold">{category.title}</h2>
+                    <h2 className="text-2xl font-semibold">
+                      <Link href={`/categories/${category.slug}`} className="transition hover:text-accent">
+                        {category.title}
+                      </Link>
+                    </h2>
                     <p className="mt-3 max-w-2xl leading-7 text-muted">{category.description}</p>
+                    <Link
+                      href={`/categories/${category.slug}`}
+                      className="mt-3 inline-block text-xs uppercase tracking-[0.18em] text-accent transition hover:text-paper"
+                    >
+                      Read the category guide →
+                    </Link>
                   </div>
                   <span className="text-sm uppercase tracking-[0.22em] text-accent">{categoryPatterns.length} patterns</span>
                 </div>
                 {categoryPatterns.length > 0 && (
                   <div className="mt-6 flex flex-wrap gap-2">
                     {categoryPatterns.map((pattern) => (
-                      <a key={pattern.slug} href={`/patterns/${pattern.slug}`} className="border border-white/10 px-3 py-2 text-sm text-paper transition-all duration-200 hover:scale-105 hover:border-accent hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
+                      <Link key={pattern.slug} href={`/patterns/${pattern.slug}`} className="border border-white/10 px-3 py-2 text-sm text-paper transition-all duration-200 hover:scale-105 hover:border-accent hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
                         {pattern.title}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 )}

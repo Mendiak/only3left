@@ -7,10 +7,14 @@ import { PatternVisualExample } from "@/components/PatternVisualExample";
 import { PatternFaqSection } from "@/components/PatternFaqSection";
 import { ManipulationMeter } from "@/components/ManipulationMeter";
 import { AlsoLike } from "@/components/AlsoLike";
+import { LongformSection } from "@/components/LongformSection";
+import { ReferenceList } from "@/components/ReferenceList";
+import { hasLongform } from "@/lib/longform";
 import { ProgressBar } from "@/components/ProgressBar";
 import { SeverityMeter } from "@/components/SeverityMeter";
 import { localizePattern, ui } from "@/lib/i18n";
 import { getPattern, patterns } from "@/lib/patterns";
+import { slugify } from "@/lib/utils";
 import { jsonLdScript, patternJsonLd, patternMetadata } from "@/lib/seo";
 
 type PatternPageProps = {
@@ -55,13 +59,22 @@ export default async function SpanishPatternPage({ params }: PatternPageProps) {
       <nav className="mb-6 text-xs uppercase tracking-[0.2em] text-muted" aria-label="Navegación">
         <Link href="/es/patterns" className="transition hover:text-paper">Patrones</Link>
         <span className="mx-2">→</span>
-        <span className="text-accent">{displayPattern.category}</span>
+        <Link
+          href={`/es/categories/${slugify(pattern.category)}`}
+          className="text-accent transition hover:text-paper"
+        >
+          {displayPattern.category}
+        </Link>
       </nav>
 
       <div className="lg:grid lg:grid-cols-[1fr_14rem] lg:gap-12">
         <article>
           <header className="border-b border-white/10 pb-10">
-            <p className="text-xs uppercase tracking-[0.28em] text-accent">{displayPattern.category}</p>
+            <p className="text-xs uppercase tracking-[0.28em] text-accent">
+              <Link href={`/es/categories/${slugify(pattern.category)}`} className="transition hover:text-paper">
+                {displayPattern.category}
+              </Link>
+            </p>
             <h1 className="mt-4 text-4xl font-black sm:text-6xl">{displayPattern.title}</h1>
             <p className="mt-6 text-xl leading-9 text-muted">{displayPattern.summary}</p>
           </header>
@@ -75,6 +88,10 @@ export default async function SpanishPatternPage({ params }: PatternPageProps) {
               <p className="mt-4 text-lg leading-8 text-muted">{displayPattern.description}</p>
             </section>
           </FadeInView>
+
+          <div className="py-10">
+            <LongformSection slug={pattern.slug} locale="es" />
+          </div>
 
           <FadeInView>
             <section className="border-b border-white/10 py-10">
@@ -168,6 +185,10 @@ export default async function SpanishPatternPage({ params }: PatternPageProps) {
           <FadeInView>
             <PatternFaqSection pattern={pattern} locale="es" />
           </FadeInView>
+
+          {!hasLongform(pattern.slug) && (
+            <ReferenceList ids={["brignull", "mathur2019", "gray2018"]} locale="es" />
+          )}
 
           <FadeInView>
             <AlsoLike currentSlug={pattern.slug} locale="es" />

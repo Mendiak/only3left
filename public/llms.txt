@@ -1,0 +1,30 @@
+# ONLY 3 LEFT
+
+> An educational field guide to dark patterns and deceptive UX. 46 named patterns across 10 categories, each with a definition, real examples, the psychological mechanism, the legal context and an ethical alternative. Available in English and Spanish.
+
+Canonical site: https://only3left.vercel.app
+Primary language: English (en). Alternate: Spanish (es), under /es.
+Licence for the dataset: CC BY 4.0, attribution required.
+
+## Start here
+
+- [What are dark patterns? Definition, types and examples](https://only3left.vercel.app/dark-patterns): the pillar page.
+- [Full catalogue](https://only3left.vercel.app/patterns): all 46 patterns with severity ratings.
+- [Categories](https://only3left.vercel.app/categories): the ten-family taxonomy.
+
+## Key pattern pages
+
+- [Roach Motel](https://only3left.vercel.app/patterns/roach-motel): easy to enter, hard to leave.
+- [Fake Scarcity](https://only3left.vercel.app/patterns/fake-scarcity): invented stock and demand.
+- [Confirmshaming](https://only3left.vercel.app/patterns/confirmshaming): refusal copy that insults.
+- [Misdirection](https://only3left.vercel.app/patterns/misdirection): attention routed away from cost.
+- [Paywall Tease](https://only3left.vercel.app/patterns/paywall-tease): commitment before the wall.
+
+## Machine-readable
+
+- [Dataset (JSON)](https://only3left.vercel.app/dataset.json): every pattern with slug, category, severity, psychology, examples and the ethical alternative. CC BY 4.0.
+- [Sitemap](https://only3left.vercel.app/sitemap.xml): both locales with hreflang alternates.
+
+## Sources
+
+The catalogue cites Harry Brignull's deceptive.design, Mathur et al. (2019) "Dark Patterns at Scale", the FTC's 2022 dark patterns report, and the EU Unfair Commercial Practices Directive.
