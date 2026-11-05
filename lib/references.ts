@@ -109,7 +109,7 @@ export const references = {
   mathur2019: {
     id: "mathur2019",
     label: "Mathur et al., Dark Patterns at Scale: Findings from a Crawl of 11K Shopping Websites (2019)",
-    url: "https://arxiv.org/abs/1907.07061",
+    url: "https://arxiv.org/abs/1907.07032",
     publisher: "arXiv",
     kind: "research",
   },

@@ -64,7 +64,7 @@ export const longform: Record<string, Record<Locale, Longform>> = {
         { label: "Deceptive Patterns — Harry Brignull", url: "https://deceptive.design/" },
         {
           label: "Mathur et al., Dark Patterns at Scale (2019)",
-          url: "https://arxiv.org/abs/1907.07061",
+          url: "https://arxiv.org/abs/1907.07032",
         },
         {
           label: "FTC — Bringing Dark Patterns to Light (2022)",
@@ -118,7 +118,7 @@ export const longform: Record<string, Record<Locale, Longform>> = {
       ],
       sources: [
         { label: "Deceptive Patterns — Harry Brignull", url: "https://deceptive.design/" },
-        { label: "Mathur et al., Dark Patterns at Scale (2019)", url: "https://arxiv.org/abs/1907.07061" },
+        { label: "Mathur et al., Dark Patterns at Scale (2019)", url: "https://arxiv.org/abs/1907.07032" },
         {
           label: "FTC — Bringing Dark Patterns to Light (2022)",
           url: "https://www.ftc.gov/reports/bringing-dark-patterns-light",
@@ -174,7 +174,7 @@ export const longform: Record<string, Record<Locale, Longform>> = {
       ],
       sources: [
         { label: "Deceptive Patterns — Harry Brignull", url: "https://deceptive.design/" },
-        { label: "Mathur et al., Dark Patterns at Scale (2019)", url: "https://arxiv.org/abs/1907.07061" },
+        { label: "Mathur et al., Dark Patterns at Scale (2019)", url: "https://arxiv.org/abs/1907.07032" },
         {
           label: "Directive 2005/29/EC, Annex I (misleading practices)",
           url: "https://eur-lex.europa.eu/eli/dir/2005/29/oj",
@@ -223,7 +223,7 @@ export const longform: Record<string, Record<Locale, Longform>> = {
       ],
       sources: [
         { label: "Deceptive Patterns — Harry Brignull", url: "https://deceptive.design/" },
-        { label: "Mathur et al., Dark Patterns at Scale (2019)", url: "https://arxiv.org/abs/1907.07061" },
+        { label: "Mathur et al., Dark Patterns at Scale (2019)", url: "https://arxiv.org/abs/1907.07032" },
         {
           label: "Directiva 2005/29/CE, anexo I (prácticas engañosas)",
           url: "https://eur-lex.europa.eu/eli/dir/2005/29/oj",
