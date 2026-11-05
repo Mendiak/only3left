@@ -4,49 +4,47 @@ import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { Locale } from "@/lib/i18n";
 import { tx, photos, Badge, Button, Rating, Photo, PriceLine, BasketRow } from "./Helpers";
+import { ActivityToast, DemoPauseButton, SpecimenCaption } from "./kit";
+import { usePausableInterval } from "./useSpecimenDemo";
 
 export function FakeScarcityExample({ locale = "en" }: { locale?: Locale }) {
   const [roomsLeft, setRoomsLeft] = useState(3);
   const [viewers, setViewers] = useState(22);
   const [toast, setToast] = useState<string | null>(null);
-  const [stage, setStage] = useState<"idle" | "booking" | "error" | "upsell" | "success">("idle");
+  const [stage, setStage] = useState<"idle" | "booking" | "error" | "success">("idle");
   const names = ["Marta", "Jon", "Lucia", "Carlos", "Emma", "James", "Sofia", "Lei"];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRoomsLeft((prev) => {
-        if (prev <= 1) return 1;
-        return prev - (Math.random() > 0.6 ? 1 : 0);
-      });
+  const { paused, setPaused } = usePausableInterval(
+    () => {
+      if (roomsLeft > 1) {
+        setRoomsLeft((prev) => Math.max(1, prev - 1));
+        setToast(names[Math.floor(Math.random() * names.length)]);
+      }
       setViewers((prev) => Math.max(5, prev + Math.floor(Math.random() * 7) - 3));
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+    },
+    4000,
+    stage === "idle"
+  );
 
   useEffect(() => {
-    const toastTimer = setInterval(() => {
-      const name = names[Math.floor(Math.random() * names.length)];
-      setToast(name);
-      setTimeout(() => setToast(null), 2500);
-    }, 5000);
-    return () => clearInterval(toastTimer);
-  }, []);
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 2500);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
-  const handleReserve = () => {
-    setStage("booking");
-    setTimeout(() => {
+  useEffect(() => {
+    if (stage !== "booking") return;
+    const timer = setTimeout(() => {
       setStage("error");
       setRoomsLeft((prev) => Math.max(0, prev - 1));
     }, 1500);
-  };
+    return () => clearTimeout(timer);
+  }, [stage]);
 
-  const handleUpsellAccept = () => {
-    setStage("success");
-  };
-
-  const handleUpsellReject = () => {
-    setRoomsLeft(1);
+  const reset = () => {
     setStage("idle");
+    setRoomsLeft(3);
+    setViewers(22);
+    setToast(null);
   };
 
   return (
@@ -56,22 +54,42 @@ export function FakeScarcityExample({ locale = "en" }: { locale?: Locale }) {
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xl font-bold">Central Studio, Old Town</p>
-            <p className="text-sm text-muted">{tx(locale, "Free cancellation", "Cancelación gratuita")} · {tx(locale, "Breakfast included", "Desayuno incluido")}</p>
+            <p className="text-sm text-muted">
+              {tx(locale, "Free cancellation", "Cancelación gratuita")} ·{" "}
+              {tx(locale, "Breakfast included", "Desayuno incluido")}
+            </p>
           </div>
           <Rating value="8.9" label={tx(locale, "Excellent", "Excelente")} />
         </div>
-        <div className="flex flex-wrap gap-2">
-          {stage === "error" ? (
-            <Badge tone="warning">{tx(locale, "Just booked!", "¡Acaba de reservarse!")}</Badge>
-          ) : (
-            <Badge tone="warning">{tx(locale, "Only", "Solo")} {roomsLeft} {tx(locale, "left", "disponibles")}</Badge>
-          )}
-          <Badge tone="neutral">{viewers} {tx(locale, "viewing", "viendo")}</Badge>
-        </div>
-        {toast && stage === "idle" && (
-          <div className="animate-in flex items-center gap-2 border border-white/10 bg-ink px-3 py-2 text-sm text-muted">
-            <span className="grid size-6 place-items-center rounded-full bg-accent text-[10px] font-black text-ink">{toast.charAt(0)}</span>
-            {toast} {tx(locale, "just booked this room", "acaba de reservar esta habitación")}
+
+        <p className="text-xs text-muted">
+          {tx(locale, "12–14 Dec · 2 guests · 1 room", "12–14 dic · 2 huéspedes · 1 habitación")}
+        </p>
+
+        {stage !== "success" && (
+          <div className="flex flex-wrap gap-2">
+            {stage === "error" ? (
+              <Badge tone="warning">{tx(locale, "Just booked!", "¡Acaba de reservarse!")}</Badge>
+            ) : (
+              <Badge tone="warning">
+                {roomsLeft === 1
+                  ? tx(locale, "Only 1 left", "Solo 1 disponible")
+                  : tx(locale, `Only ${roomsLeft} left`, `Solo ${roomsLeft} disponibles`)}
+              </Badge>
+            )}
+            <Badge tone="neutral">
+              {viewers} {tx(locale, "viewing", "viendo")}
+            </Badge>
+          </div>
+        )}
+
+        {stage === "idle" && (
+          <div className="min-h-11">
+            {toast && (
+              <ActivityToast initial={toast.charAt(0)}>
+                {toast} {tx(locale, "just booked this room", "acaba de reservar esta habitación")}
+              </ActivityToast>
+            )}
           </div>
         )}
 
@@ -80,8 +98,9 @@ export function FakeScarcityExample({ locale = "en" }: { locale?: Locale }) {
             <div>
               <p className="text-xs text-muted">{tx(locale, "Tonight", "Esta noche")}</p>
               <p className="text-2xl font-black">142€</p>
+              <p className="text-[10px] text-muted">{tx(locale, "Total · taxes and fees included", "Total · impuestos y tasas incluidos")}</p>
             </div>
-            <Button onClick={handleReserve}>{tx(locale, "Reserve", "Reservar")}</Button>
+            <Button onClick={() => setStage("booking")}>{tx(locale, "Reserve", "Reservar")}</Button>
           </div>
         )}
 
@@ -97,7 +116,9 @@ export function FakeScarcityExample({ locale = "en" }: { locale?: Locale }) {
         {stage === "error" && (
           <div className="animate-in space-y-4 border-t border-white/10 pt-4">
             <div className="border border-red-500/20 bg-red-500/10 p-3 text-center">
-              <p className="text-sm font-black text-red-400">{tx(locale, "Someone just booked this room!", "¡Alguien acaba de reservar esta habitación!")}</p>
+              <p className="text-sm font-black text-red-400">
+                {tx(locale, "Someone just booked this room!", "¡Alguien acaba de reservar esta habitación!")}
+              </p>
               <p className="mt-1 text-xs text-muted">{tx(locale, "It happened while you were reviewing.", "Ocurrió mientras revisabas.")}</p>
             </div>
             <div className="border border-accent/20 bg-accent/5 p-4 text-center">
@@ -105,8 +126,17 @@ export function FakeScarcityExample({ locale = "en" }: { locale?: Locale }) {
               <p className="mt-2 text-3xl font-black">189€</p>
               <p className="text-xs text-muted">{tx(locale, "Premium studio with city view", "Estudio premium con vistas")}</p>
               <div className="mt-4 flex gap-3">
-                <Button full onClick={handleUpsellAccept}>{tx(locale, "Book it", "Reservar")}</Button>
-                <button onClick={handleUpsellReject} className="shrink-0 px-4 py-2 text-xs text-muted underline">{tx(locale, "No thanks", "No, gracias")}</button>
+                <Button full onClick={() => setStage("success")}>{tx(locale, "Book it", "Reservar")}</Button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRoomsLeft(1);
+                    setStage("idle");
+                  }}
+                  className="shrink-0 px-4 py-2 text-xs text-muted underline transition hover:text-paper"
+                >
+                  {tx(locale, "No thanks", "No, gracias")}
+                </button>
               </div>
             </div>
           </div>
@@ -115,11 +145,93 @@ export function FakeScarcityExample({ locale = "en" }: { locale?: Locale }) {
         {stage === "success" && (
           <div className="animate-in border-t border-white/10 pt-4 text-center">
             <p className="text-xl font-black text-accent">✓ {tx(locale, "Reserved!", "¡Reservado!")}</p>
-            <p className="mt-2 text-xs text-muted/30">{tx(locale, "You paid 47€ more than the original room.", "Pagaste 47€ más que la habitación original.")}</p>
+            <p className="mt-2 text-xs leading-5 text-muted/70">
+              {tx(locale, "You paid 47€ more than the original room.", "Pagaste 47€ más que la habitación original.")}
+            </p>
+            <button
+              type="button"
+              onClick={reset}
+              className="mt-3 text-[10px] uppercase tracking-[0.12em] text-muted underline underline-offset-2 transition hover:text-paper"
+            >
+              {tx(locale, "Try again", "Probar de nuevo")}
+            </button>
           </div>
         )}
 
-        <p className="text-[10px] text-center text-muted/30">{tx(locale, "Updated in real time", "Actualizado en tiempo real")}</p>
+        <div className="flex items-center justify-center gap-3 border-t border-white/10 pt-3">
+          <SpecimenCaption>{tx(locale, "Updated in real time", "Actualizado en tiempo real")}</SpecimenCaption>
+          {stage === "idle" && <DemoPauseButton paused={paused} onToggle={() => setPaused((value) => !value)} locale={locale} />}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function FakeScarcityEthical({ locale = "en" }: { locale?: Locale }) {
+  const [booked, setBooked] = useState(false);
+
+  return (
+    <div className="overflow-hidden border border-emerald-400/20 bg-[#101010]">
+      <Photo src={photos.hotel} alt={tx(locale, "Hotel room", "Habitación de hotel")} />
+      <div className="space-y-4 p-4">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xl font-bold">Central Studio, Old Town</p>
+            <p className="text-sm text-muted">
+              {tx(locale, "Free cancellation", "Cancelación gratuita")} ·{" "}
+              {tx(locale, "Breakfast included", "Desayuno incluido")}
+            </p>
+          </div>
+          <Rating value="8.9" label={tx(locale, "Excellent", "Excelente")} />
+        </div>
+
+        <p className="text-xs text-muted">
+          {tx(locale, "12–14 Dec · 2 guests · 1 room", "12–14 dic · 2 huéspedes · 1 habitación")}
+        </p>
+
+        <div className="flex flex-wrap gap-2">
+          <Badge tone="neutral">{tx(locale, "3 rooms available", "3 habitaciones disponibles")}</Badge>
+          <Badge tone="neutral">
+            {tx(locale, "Availability checked 2 min ago", "Disponibilidad comprobada hace 2 min")}
+          </Badge>
+        </div>
+
+        <p className="text-xs leading-5 text-muted">
+          {tx(
+            locale,
+            "Total price: 142€ including taxes and fees. Free cancellation until 24 hours before check-in.",
+            "Precio total: 142€ con impuestos y tasas. Cancelación gratuita hasta 24 h antes de la entrada."
+          )}
+        </p>
+
+        {booked ? (
+          <div className="animate-in border-t border-white/10 pt-4 text-center">
+            <p className="text-xl font-black text-emerald-400">✓ {tx(locale, "Reserved at 142€", "Reservado por 142€")}</p>
+            <p className="mt-2 text-xs leading-5 text-muted">
+              {tx(
+                locale,
+                "Confirmation sent. No upsell, no timer, no price change.",
+                "Confirmación enviada. Sin upsell, sin temporizador, sin cambio de precio."
+              )}
+            </p>
+            <button
+              type="button"
+              onClick={() => setBooked(false)}
+              className="mt-3 text-[10px] uppercase tracking-[0.12em] text-muted underline underline-offset-2 transition hover:text-paper"
+            >
+              {tx(locale, "Try again", "Probar de nuevo")}
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-end justify-between gap-4 border-t border-white/10 pt-4">
+            <div>
+              <p className="text-xs text-muted">{tx(locale, "2 nights", "2 noches")}</p>
+              <p className="text-2xl font-black">142€</p>
+              <p className="text-[10px] text-muted">{tx(locale, "Final price", "Precio final")}</p>
+            </div>
+            <Button onClick={() => setBooked(true)}>{tx(locale, "Reserve at this price", "Reservar a este precio")}</Button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -58,15 +58,35 @@ export const feedPhotos = [
   "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80",
 ];
 
-export function SpecimenFrame({ title, children }: { title: string; children: ReactNode }) {
+export function SpecimenFrame({
+  title,
+  children,
+  locale = "en",
+  tone = "dark",
+  minHeight = "",
+}: {
+  title: string;
+  children: ReactNode;
+  locale?: Locale;
+  tone?: "dark" | "ethical";
+  minHeight?: string;
+}) {
+  const ethical = tone === "ethical";
+
   return (
-    <div className="border border-white/10 bg-surface p-4">
-      <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
-        <p className="text-xs uppercase tracking-[0.22em] text-accent">{title}</p>
-        <p className="text-xs text-muted">visual specimen</p>
-      </div>
-      {children}
-    </div>
+    <figure className={`border bg-surface p-4 ${ethical ? "border-emerald-400/40" : "border-white/10"}`}>
+      <figcaption
+        className={`mb-4 flex items-center justify-between gap-3 border-b pb-3 ${
+          ethical ? "border-emerald-400/20" : "border-white/10"
+        }`}
+      >
+        <span className={`text-xs uppercase tracking-[0.22em] ${ethical ? "text-emerald-400" : "text-accent"}`}>
+          {title}
+        </span>
+        <span className="text-xs text-muted">{tx(locale, "visual specimen", "espécimen visual")}</span>
+      </figcaption>
+      <div className={minHeight}>{children}</div>
+    </figure>
   );
 }
 

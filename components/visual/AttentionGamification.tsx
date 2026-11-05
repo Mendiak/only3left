@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import type { Locale } from "@/lib/i18n";
 import { tx, photos, feedPhotos, Badge, Button, Photo, PhoneShell } from "./Helpers";
+import { SpecimenField } from "./kit";
 
 export function ValidationLoopExample({ locale = "en" }: { locale?: Locale }) {
   const names = ["Ana", "Mark", "Lucia", "Carlos", "Emma", "James"];
@@ -123,90 +124,288 @@ export function ReactionPressureExample({ locale = "en" }: { locale?: Locale }) 
 export function HardToCloseExample({ locale = "en" }: { locale?: Locale }) {
   const [closed, setClosed] = useState(false);
   const [misses, setMisses] = useState(0);
+  const [clicks, setClicks] = useState(0);
   const [showHint, setShowHint] = useState(false);
-  const closeRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    const el = closeRef.current;
-    if (!el) return;
-    const parent = el.parentElement;
-    if (!parent) return;
-
-    const handleClick = (e: MouseEvent) => {
-      if (closed) return;
-      const rect = el.getBoundingClientRect();
-      const x = e.clientX;
-      const y = e.clientY;
-      if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
-        setClosed(true);
-      } else {
-        setMisses((p) => p + 1);
-      }
-    };
-
-    parent.addEventListener("click", handleClick);
-    return () => parent.removeEventListener("click", handleClick);
-  }, [closed]);
+  const [subscribed, setSubscribed] = useState(false);
 
   if (closed) {
     return (
-      <div className="flex flex-col items-center justify-center border border-white/10 bg-[#101010] p-10">
+      <div className="flex min-h-[320px] flex-col items-center justify-center border border-white/10 bg-[#101010] p-8 text-center">
         <p className="text-lg font-black">{tx(locale, "Closed!", "¡Cerrado!")}</p>
-        <p className="mt-2 text-sm text-muted">
+        <p className="mt-2 max-w-xs text-sm leading-6 text-muted">
           {locale === "es"
-            ? `Te ha costado ${misses + 1} clic${misses > 0 ? "s" : ""} acertar un objetivo de 4 píxeles.`
-            : `It took you ${misses + 1} click${misses > 0 ? "s" : ""} to hit a 4px target.`}
+            ? `Te costó ${clicks} clic${clicks === 1 ? "" : "s"} acertar un objetivo de 4×4 px.`
+            : `It took you ${clicks} click${clicks === 1 ? "" : "s"} to hit a 4×4px target.`}
         </p>
+        <button
+          type="button"
+          onClick={() => {
+            setClosed(false);
+            setMisses(0);
+            setClicks(0);
+            setShowHint(false);
+            setSubscribed(false);
+          }}
+          className="mt-4 border border-white/15 px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-muted transition hover:border-accent/50 hover:text-accent"
+        >
+          {tx(locale, "Try again", "Probar de nuevo")}
+        </button>
+      </div>
+    );
+  }
+
+  const registerMiss = () => {
+    setMisses((value) => value + 1);
+    setClicks((value) => value + 1);
+  };
+
+  const close = () => {
+    setClicks((value) => value + 1);
+    setClosed(true);
+  };
+
+  return (
+    <div className="relative min-h-[360px] select-none overflow-hidden border border-white/10 bg-[#0c0c0c] pb-12">
+      <div aria-hidden="true" className="pointer-events-none select-none space-y-2 p-5 opacity-25">
+        <div className="h-2 w-24 bg-white/30" />
+        <div className="h-2 w-full bg-white/20" />
+        <div className="h-2 w-11/12 bg-white/20" />
+        <div className="h-2 w-9/12 bg-white/20" />
+        <div className="mt-4 h-2 w-2/3 bg-white/20" />
+        <div className="h-2 w-full bg-white/10" />
+        <div className="h-2 w-10/12 bg-white/10" />
+        <div className="mt-4 h-2 w-5/12 bg-white/10" />
+      </div>
+
+      <div
+        aria-hidden="true"
+        onClick={registerMiss}
+        className="absolute inset-0 cursor-default"
+      />
+
+      <div
+        className="relative mx-auto mt-8 w-[calc(100%-2rem)] max-w-sm border border-white/10 bg-ink p-5 shadow-2xl shadow-black/60"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <p className="text-xs uppercase tracking-[0.18em] text-muted">{tx(locale, "Before you go", "Antes de irte")}</p>
+        <p className="mt-3 pr-8 text-2xl font-black">{tx(locale, "Get 20% off your first order", "Consigue un 20% en tu primer pedido")}</p>
+        <p className="mt-2 text-sm leading-6 text-muted">
+          {tx(
+            locale,
+            "Join 15,000 subscribers and receive exclusive access to deals, trends, and premium content.",
+            "Únete a 15.000 suscriptores y recibe acceso exclusivo a ofertas, tendencias y contenido premium."
+          )}
+        </p>
+        <div className="mt-5 space-y-3">
+          <input
+            type="email"
+            aria-label={tx(locale, "Email", "Correo")}
+            className="w-full border border-white/10 bg-[#101010] px-3 py-3 text-sm text-paper outline-none transition focus:border-accent/50"
+            placeholder={tx(locale, "email@example.com", "email@ejemplo.com")}
+          />
+          <button
+            type="button"
+            onClick={() => setSubscribed(true)}
+            className="w-full bg-accent py-3 text-sm font-black text-ink transition hover:bg-paper focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent"
+          >
+            {subscribed ? tx(locale, "Subscribed", "Suscrito") : tx(locale, "Subscribe", "Suscribirse")}
+          </button>
+          {subscribed && (
+            <p className="text-center text-[10px] text-emerald-400/80">
+              {tx(locale, "Check your inbox.", "Revisa tu correo.")}
+            </p>
+          )}
+        </div>
+        <p className="mt-4 text-[11px] leading-5 text-muted">
+          {tx(locale, "No spam. Unsubscribe anytime.", "Sin spam. Cancela cuando quieras.")}
+        </p>
+
+        <div className="absolute right-0 top-0">
+          <div
+            className="relative h-4 w-4"
+            onMouseEnter={() => setShowHint(true)}
+            onMouseLeave={() => setShowHint(false)}
+            onClick={registerMiss}
+          >
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                close();
+              }}
+              aria-label={tx(locale, "Close", "Cerrar")}
+              className="absolute right-1.5 top-1.5 z-20 h-1 w-1 focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent"
+            >
+              <span aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] text-white/20">
+                ✕
+              </span>
+            </button>
+            {showHint && (
+              <>
+                <div className="absolute right-0 top-0 z-10 h-11 w-11 border border-dashed border-red-400/60 bg-red-400/5">
+                  <span className="absolute bottom-1 right-1 text-[8px] uppercase tracking-[0.08em] text-red-400/70">44×44</span>
+                </div>
+                <div className="pointer-events-none absolute right-[6px] top-[6px] z-20 h-1 w-1 bg-red-400 ring-2 ring-red-400/30" />
+                <div className="pointer-events-none absolute right-0 -top-10 z-30 w-44 border border-red-400/30 bg-ink px-2 py-1 text-[9px] leading-4 text-red-300/80">
+                  {tx(locale, "Real target: 4×4px", "Objetivo real: 4×4 px")}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute inset-x-0 bottom-0 z-30 flex items-center justify-between gap-3 border-t border-white/10 bg-black/60 px-3 py-2">
+        <p className="text-[10px] text-red-300/80" aria-live="polite">
+          {misses > 0
+            ? `${misses} ${
+                locale === "es"
+                  ? misses === 1
+                    ? "clic fuera"
+                    : "clics fuera"
+                  : misses === 1
+                    ? "outside click"
+                    : "outside clicks"
+              }`
+            : tx(locale, "Clicking outside won't close it", "Hacer clic fuera no lo cierra")}
+        </p>
+        <button
+          type="button"
+          onClick={() => setShowHint((value) => !value)}
+          aria-pressed={showHint}
+          className="text-[10px] uppercase tracking-[0.12em] text-muted/70 underline underline-offset-2 transition hover:text-paper"
+        >
+          {showHint ? tx(locale, "Hide target", "Ocultar objetivo") : tx(locale, "Show target", "Mostrar objetivo")}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function HardToCloseEthical({ locale = "en" }: { locale?: Locale }) {
+  const [open, setOpen] = useState(true);
+  const [subscribed, setSubscribed] = useState(false);
+  const [email, setEmail] = useState("");
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (open) closeRef.current?.focus();
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open]);
+
+  if (!open) {
+    return (
+      <div className="flex min-h-[320px] flex-col items-center justify-center border border-emerald-400/20 bg-[#101010] p-8 text-center">
+        <p className="text-lg font-black text-emerald-400">{tx(locale, "Popup closed", "Popup cerrado")}</p>
+        <p className="mt-2 max-w-xs text-sm leading-6 text-muted">
+          {tx(
+            locale,
+            "A 44×44px close button, Escape, outside click and visible focus.",
+            "Botón de 44×44 px, Escape, clic fuera y foco visible."
+          )}
+        </p>
+        <button
+          type="button"
+          onClick={() => {
+            setOpen(true);
+            setSubscribed(false);
+          }}
+          className="mt-4 border border-emerald-400/40 px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-emerald-300 transition hover:bg-emerald-400/10"
+        >
+          {tx(locale, "Reopen popup", "Reabrir popup")}
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="relative select-none border border-white/10 bg-[#101010]">
-      <div className="bg-ink p-5">
-        <p className="text-xs uppercase tracking-[0.18em] text-muted">{tx(locale, "Before you go", "Antes de irte")}</p>
-        <p className="mt-3 text-2xl font-black">{tx(locale, "Get 20% off your first order", "Consigue un 20% en tu primer pedido")}</p>
-        <p className="mt-2 text-sm leading-6 text-muted">{tx(locale, "Join 15,000 subscribers and receive exclusive access to deals, trends, and premium content.", "Únete a 15.000 suscriptores y recibe acceso exclusivo a ofertas, tendencias y contenido premium.")}</p>
-        <div className="mt-5 space-y-3">
-          <input className="w-full border border-white/10 bg-[#101010] px-3 py-3 text-sm text-paper outline-none" placeholder="email@ejemplo.com" readOnly />
-          <button className="w-full bg-accent py-3 text-sm font-black text-ink transition hover:bg-paper">{tx(locale, "Subscribe", "Suscribirse")}</button>
-        </div>
-        <p className="mt-4 text-[11px] leading-5 text-muted">{tx(locale, "No spam. Unsubscribe anytime.", "Sin spam. Cancela cuando quieras.")}</p>
+    <div className="relative min-h-[360px] overflow-hidden border border-emerald-400/20 bg-[#0c0c0c]">
+      <div aria-hidden="true" className="pointer-events-none select-none space-y-2 p-5 opacity-25">
+        <div className="h-2 w-24 bg-white/30" />
+        <div className="h-2 w-full bg-white/20" />
+        <div className="h-2 w-11/12 bg-white/20" />
+        <div className="h-2 w-9/12 bg-white/20" />
+        <div className="mt-4 h-2 w-2/3 bg-white/20" />
+        <div className="h-2 w-full bg-white/10" />
+        <div className="h-2 w-10/12 bg-white/10" />
       </div>
 
-      <div className="absolute right-0 top-0">
-        <div
-          className="relative"
-          onMouseEnter={() => setShowHint(true)}
-          onMouseLeave={() => setShowHint(false)}
+      <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} aria-hidden="true" />
+
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ethical-newsletter-title"
+        className="relative mx-auto my-6 w-[calc(100%-2rem)] max-w-sm border border-emerald-400/30 bg-ink p-5"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <button
+          ref={closeRef}
+          type="button"
+          onClick={() => setOpen(false)}
+          aria-label={tx(locale, "Close", "Cerrar")}
+          className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center border border-emerald-400/30 text-lg text-emerald-300 transition hover:bg-emerald-400/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-emerald-400"
         >
-          <button
-            ref={closeRef}
-            className="relative z-10 flex h-4 w-4 cursor-crosshair items-center justify-center text-[9px] text-white/15"
-          >
-            ✕
-          </button>
-          {showHint && (
-            <div className="absolute right-0 top-0 z-20 border border-dashed border-red-400/60 bg-red-400/5" style={{ width: "44px", height: "44px", transform: "translate(calc(-50% + 8px), calc(-50% + 8px))" }}>
-              <div className="flex h-full items-center justify-center">
-                <span className="text-[8px] uppercase tracking-[0.12em] text-red-400/60">44×44</span>
-              </div>
-            </div>
+          ✕
+        </button>
+        <p id="ethical-newsletter-title" className="pr-12 text-xs uppercase tracking-[0.18em] text-emerald-400">
+          {tx(locale, "Before you go", "Antes de irte")}
+        </p>
+        <p className="mt-3 pr-10 text-2xl font-black">
+          {tx(locale, "Get 20% off your first order", "Consigue un 20% en tu primer pedido")}
+        </p>
+        <p className="mt-2 text-sm leading-6 text-muted">
+          {tx(
+            locale,
+            "Join 15,000 subscribers and receive exclusive access to deals, trends, and premium content.",
+            "Únete a 15.000 suscriptores y recibe acceso exclusivo a ofertas, tendencias y contenido premium."
           )}
-        </div>
-      </div>
-
-      <div className="absolute bottom-2 right-2 flex items-center gap-2">
-        {misses > 0 && (
-          <p className="animate-in text-[10px] text-red-400/70" style={{ animationDuration: "200ms" }}>
-            {misses} {locale === "es" ? (misses > 1 ? "fallos" : "fallo") : misses > 1 ? "misses" : "miss"}
+        </p>
+        <form
+          className="mt-5 space-y-3"
+          onSubmit={(event) => {
+            event.preventDefault();
+            setSubscribed(true);
+          }}
+        >
+          <SpecimenField
+            label={tx(locale, "Email", "Correo")}
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder={tx(locale, "email@example.com", "email@ejemplo.com")}
+            required
+          />
+          <Button full type="submit">
+            {subscribed ? tx(locale, "Subscribed", "Suscrito") : tx(locale, "Subscribe", "Suscribirse")}
+          </Button>
+        </form>
+        {subscribed && (
+          <p className="mt-2 text-center text-[10px] text-emerald-400/80">
+            {tx(locale, "Check your inbox.", "Revisa tu correo.")}
           </p>
         )}
-        <p
-          className="cursor-pointer text-[10px] text-muted/40 underline underline-offset-2 hover:text-muted/70"
-          onClick={() => setShowHint((p) => !p)}
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="mt-3 w-full py-2 text-xs text-muted underline underline-offset-2 transition hover:text-paper"
         >
-          {showHint ? tx(locale, "hide", "ocultar") : tx(locale, "show", "mostrar")} {tx(locale, "target", "objetivo")}
+          {tx(locale, "No thanks", "No, gracias")}
+        </button>
+        <p className="mt-3 text-[10px] leading-4 text-muted/60">
+          {tx(
+            locale,
+            "Close with the 44×44 button, Escape or by clicking outside.",
+            "Cierra con el botón de 44×44, Escape o clicando fuera."
+          )}
         </p>
       </div>
     </div>

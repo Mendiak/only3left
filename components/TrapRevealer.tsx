@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import type { Locale } from "@/lib/i18n";
+import { specimenCallouts } from "./visual/anatomy";
 
 type TrapInfo = {
   label: { en: string; es: string };
@@ -10,9 +11,9 @@ type TrapInfo = {
 
 const trapData: Record<string, TrapInfo> = {
   "fake-scarcity": {
-    label: { en: "Fake countdown + upsell", es: "Contador falso + sobreventa" },
+    label: { en: "Fake scarcity + upsell", es: "Escasez falsa + sobreventa" },
     notes: [
-      { en: "The 'only X left' countdown is automated and resets", es: "El contador de 'solo X disponibles' es automático y se reinicia" },
+      { en: "Inventory drops on a timer, not on real bookings", es: "El inventario baja por un temporizador, no por reservas reales" },
       { en: "Viewer count is randomly generated", es: "El número de visitantes se genera aleatoriamente" },
       { en: "Booking failure leads to a more expensive upsell", es: "El error de reserva lleva a un upsell más caro" },
     ],
@@ -279,8 +280,8 @@ const trapData: Record<string, TrapInfo> = {
   "visual-obstruction": {
     label: { en: "Multi-layer blockers", es: "Bloqueo multicapa" },
     notes: [
-      { en: "Multiple overlays appear one after another", es: "Múltiples capas aparecen una tras otra" },
-      { en: "Each layer requires a separate dismissal", es: "Cada capa requiere un cierre por separado" },
+      { en: "A new overlay appears at every dismissal", es: "Aparece una capa nueva en cada intento de cierre" },
+      { en: "The commercial action is the easy way out", es: "La acción comercial es la salida fácil" },
     ],
   },
   "like-gating": {
@@ -307,8 +308,8 @@ const trapData: Record<string, TrapInfo> = {
   "hard-to-close": {
     label: { en: "Tiny close target", es: "Botón de cierre minúsculo" },
     notes: [
-      { en: "The close button is deliberately tiny", es: "El botón de cerrar es deliberadamente pequeño" },
-      { en: "Clicking outside doesn't dismiss the popup", es: "Hacer clic fuera no cierra la ventana" },
+      { en: "The clickable close area is only 4×4 pixels", es: "La zona clicable para cerrar mide solo 4×4 píxeles" },
+      { en: "Clicking outside the popup does nothing", es: "Hacer clic fuera de la ventana no hace nada" },
     ],
   },
   "live-activity-indicator": {
@@ -352,52 +353,166 @@ export function TrapRevealer({
   locale?: Locale;
 }) {
   const [revealed, setRevealed] = useState(false);
+  const [runId, setRunId] = useState(0);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelId = useId();
   const info = trapData[slug] || defaultTrap;
   const label = locale === "es" ? info.label.es : info.label.en;
+  const callouts = specimenCallouts[slug] ?? [];
+
+  useEffect(() => {
+    if (!revealed) return;
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    closeRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setRevealed(false);
+        return;
+      }
+
+      if (event.key !== "Tab" || !panelRef.current) return;
+
+      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      if (previouslyFocused) previouslyFocused.focus();
+    };
+  }, [revealed]);
+
+  const resetSpecimen = () => {
+    setRunId((id) => id + 1);
+    setRevealed(false);
+  };
 
   return (
     <div className="relative">
       <div className="relative">
-        {revealed && (
-          <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/40 p-4 animate-in">
-            <div className="max-w-sm space-y-3 border border-accent/30 bg-[#0a0a0a] p-5 shadow-2xl">
-              <p className="text-xs uppercase tracking-[0.22em] text-accent">
-                {locale === "es" ? "¿Qué trampa es?" : "What's the trick?"}
-              </p>
-              <p className="text-sm font-bold text-accent">{label}</p>
-              <ul className="space-y-2">
-                {info.notes.map((note, i) => (
-                  <li key={i} className="flex gap-2 text-xs text-muted">
-                    <span className="shrink-0 text-accent">#{i + 1}</span>
-                    <span>{locale === "es" ? note.es : note.en}</span>
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => setRevealed(false)}
-                className="w-full border border-white/10 py-2 text-xs text-muted transition hover:bg-white/5"
-              >
-                {locale === "es" ? "Cerrar" : "Close"}
-              </button>
-            </div>
-          </div>
-        )}
-        <div className={revealed ? "pointer-events-none blur-sm" : ""}>
+        <div
+          key={runId}
+          className={revealed ? "pointer-events-none" : ""}
+          aria-hidden={revealed ? true : undefined}
+          {...(revealed ? { inert: true as boolean } : {})}
+        >
           {children}
         </div>
+
+        {revealed && (
+          <>
+            <div
+              className="absolute inset-0 z-30 bg-black/55"
+              onClick={() => setRevealed(false)}
+              aria-hidden="true"
+            />
+
+            {callouts.map((callout, index) => (
+              <div
+                key={`${slug}-callout-${index}`}
+                className="pointer-events-none absolute z-40 -translate-x-1/2 -translate-y-1/2"
+                style={{ top: callout.top, left: callout.left }}
+                aria-hidden="true"
+              >
+                <span className="flex size-7 items-center justify-center rounded-full border border-accent bg-ink text-xs font-black text-accent shadow-lg shadow-black/60 ring-4 ring-black/40">
+                  {index + 1}
+                </span>
+              </div>
+            ))}
+
+            <div className="absolute inset-0 z-50 flex items-center justify-center p-3">
+              <div
+                ref={panelRef}
+                id={panelId}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={`${panelId}-title`}
+                className="max-h-full w-full max-w-sm overflow-y-auto border border-accent/40 bg-[#0a0a0a] p-5 shadow-2xl contrast-more:border-accent/60"
+              >
+                <p id={`${panelId}-title`} className="text-xs uppercase tracking-[0.22em] text-accent">
+                  {locale === "es" ? "¿Qué trampa es?" : "What's the trick?"}
+                </p>
+                <p className="mt-2 text-sm font-bold text-accent">{label}</p>
+                <ul className="mt-3 space-y-2">
+                  {info.notes.map((note, i) => (
+                    <li key={i} className="flex gap-2 text-xs leading-5 text-muted">
+                      <span className="shrink-0 text-accent">#{i + 1}</span>
+                      <span>{locale === "es" ? note.es : note.en}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-4 flex gap-2">
+                  <button
+                    onClick={resetSpecimen}
+                    className="flex-1 border border-white/10 py-2 text-[10px] font-bold uppercase tracking-wider text-muted transition hover:border-accent/50 hover:text-accent"
+                  >
+                    {locale === "es" ? "Reiniciar espécimen" : "Reset specimen"}
+                  </button>
+                  <button
+                    ref={closeRef}
+                    onClick={() => setRevealed(false)}
+                    className="flex-1 border border-accent/40 bg-accent/10 py-2 text-[10px] font-bold uppercase tracking-wider text-accent transition hover:bg-accent/20"
+                  >
+                    {locale === "es" ? "Cerrar" : "Close"}
+                  </button>
+                </div>
+                {callouts.length > 0 && (
+                  <p className="mt-3 text-[10px] leading-4 text-muted/60">
+                    {locale === "es"
+                      ? "Los números señalan los elementos que sostienen la trampa."
+                      : "The numbers point to the elements that hold the trick together."}
+                  </p>
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </div>
-      <button
-        onClick={() => setRevealed(!revealed)}
-        className={`absolute bottom-3 right-3 z-30 border px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition ${
-          revealed
-            ? "border-accent/50 bg-accent/20 text-accent"
-            : "border-white/10 bg-black/60 text-muted hover:border-accent/50 hover:text-accent"
-        }`}
-      >
-        {revealed
-          ? (locale === "es" ? "Cerrar" : "Close")
-          : (locale === "es" ? `¿${label}?` : `"${label}"?`)}
-      </button>
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-[10px] uppercase tracking-[0.14em] text-muted/60">
+          {locale === "es" ? "Espécimen interactivo" : "Interactive specimen"}
+        </p>
+        <button
+          ref={triggerRef}
+          type="button"
+          onClick={() => setRevealed((value) => !value)}
+          aria-expanded={revealed}
+          aria-controls={panelId}
+          className={`border px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent ${
+            revealed
+              ? "border-accent/50 bg-accent/20 text-accent"
+              : "border-white/10 bg-black/60 text-muted hover:border-accent/50 hover:text-accent"
+          }`}
+        >
+          {revealed
+            ? locale === "es"
+              ? "Cerrar"
+              : "Close"
+            : locale === "es"
+              ? "¿Qué trampa es?"
+              : "What's the trick?"}
+        </button>
+      </div>
     </div>
   );
 }

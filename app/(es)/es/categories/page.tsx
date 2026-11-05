@@ -43,7 +43,7 @@ export default function SpanishCategoriesPage() {
 
           return (
             <FadeInView key={category.slug} delay={i * 80}>
-              <section id={category.slug} className="scroll-mt-24 border border-white/10 bg-surface p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5">
+              <section id={category.slug} className="border border-white/10 bg-surface p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5">
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
                   <div>
                     <h2 className="text-2xl font-semibold">

@@ -12,6 +12,13 @@
 
 html {
   scroll-behavior: smooth;
+  /*
+   * The header is sticky, so anchored sections (#definition, #faq, sidebar
+   * links…) would otherwise land underneath it. Reserve its height plus a
+   * little breathing room for every in-page navigation, including the skip
+   * link and hashes loaded from another page.
+   */
+  scroll-padding-top: 6rem;
 }
 
 body {
@@ -58,6 +65,22 @@ body {
 }
 .animate-progress {
   animation: progress 1.5s ease-in-out forwards;
+}
+
+/* Used by specimens for reveal/entrance feedback. Kept as an alias so the
+   existing markup gets a real animation instead of a missing utility. */
+@keyframes specimen-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.animate-in {
+  animation: specimen-in 0.28s ease-out both;
 }
 
 @media (prefers-reduced-motion: reduce) {

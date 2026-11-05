@@ -4,13 +4,13 @@ import { type ReactNode, useState } from "react";
 import type { Pattern } from "@/lib/types";
 import type { Locale } from "@/lib/i18n";
 import { localizePattern } from "@/lib/i18n";
-import { SpecimenFrame, tx } from "./visual/Helpers";
+import { SpecimenFrame } from "./visual/Helpers";
 import { TrapRevealer } from "@/components/TrapRevealer";
-import { FakeScarcityExample, CountdownResetExample, ScarcityLadderExample, DecoyPricingExample, DripPricingExample, ComparisonPreventionExample, FakeDiscountExample, AnchoredBundlingExample, BaitAndSwitchExample, DefaultBiasExample, PreselectedOptionsExample, SneakIntoBasketExample, FrequentlyBoughtTogetherExample } from "./visual/UrgencyPricing";
+import { FakeScarcityExample, FakeScarcityEthical, CountdownResetExample, ScarcityLadderExample, DecoyPricingExample, DripPricingExample, ComparisonPreventionExample, FakeDiscountExample, AnchoredBundlingExample, BaitAndSwitchExample, DefaultBiasExample, PreselectedOptionsExample, SneakIntoBasketExample, FrequentlyBoughtTogetherExample } from "./visual/UrgencyPricing";
 import { RoachMotelExample, HiddenCancellationExample, ForcedContinuityExample, NegativeOptionBillingExample, ForcedRegistrationExample, AutoplayTrapExample, LoyaltyLockInExample } from "./visual/SubscriptionInterface";
 import { LikeGateExample, ConfirmshamingExample, PrivacyZuckeringExample, SocialProofInflationExample, VisualHierarchyExample, CookieLabyrinthExample, TrickQuestionsExample, MisdirectionExample, PermissionPrimingExample, FakeActivityExample, FriendSpamExample, DisguisedAdsExample, ReviewGatingExample, SocialCrossSellExample } from "./visual/PrivacySocial";
-import { ValidationLoopExample, ReactionPressureExample, HardToCloseExample, LiveActivityExample, NotificationAddictionExample, NaggingExample, StreakPressureExample, PaywallTeaseExample, InfiniteScrollFeed } from "./visual/AttentionGamification";
-import { AiAuthorityWashingExample, SurveyToSalesFunnelExample, VisualObstructionExample } from "./visual/TrustMobile";
+import { ValidationLoopExample, ReactionPressureExample, HardToCloseExample, HardToCloseEthical, LiveActivityExample, NotificationAddictionExample, NaggingExample, StreakPressureExample, PaywallTeaseExample, InfiniteScrollFeed } from "./visual/AttentionGamification";
+import { AiAuthorityWashingExample, SurveyToSalesFunnelExample, VisualObstructionExample, VisualObstructionEthical } from "./visual/TrustMobile";
 
 type PatternVisualExampleProps = {
   pattern: Pattern;
@@ -66,6 +66,33 @@ const visualExamples: Record<string, (locale: Locale) => ReactNode> = {
   "frequently-bought-together": (locale) => <FrequentlyBoughtTogetherExample locale={locale} />,
 };
 
+const ethicalExamples: Record<string, (locale: Locale) => ReactNode> = {
+  "fake-scarcity": (locale) => <FakeScarcityEthical locale={locale} />,
+  "hard-to-close": (locale) => <HardToCloseEthical locale={locale} />,
+  "visual-obstruction": (locale) => <VisualObstructionEthical locale={locale} />,
+};
+
+const specimenMinHeight: Record<string, string> = {
+  "fake-scarcity": "min-h-[540px]",
+  "hard-to-close": "min-h-[420px]",
+  "visual-obstruction": "min-h-[500px]",
+};
+
+const ethicalNotes: Record<string, { en: string; es: string }> = {
+  "fake-scarcity": {
+    en: "Real inventory, the final price, and no manufactured timer.",
+    es: "Inventario real, el precio final y ningún temporizador fabricado.",
+  },
+  "hard-to-close": {
+    en: "A 44×44px close button, Escape, outside click and visible focus.",
+    es: "Cierre de 44×44 px, Escape, clic fuera y foco visible.",
+  },
+  "visual-obstruction": {
+    en: "One cancellation path, no extra layers, no retention theatre.",
+    es: "Un único camino de cancelación, sin capas extra ni teatro de retención.",
+  },
+};
+
 const specimenTitles: Record<string, Record<"en" | "es", string>> = {
   "fake-scarcity": { en: "Hotel booking result", es: "Resultado de reserva de hotel" },
   "countdown-reset": { en: "Flash sale checkout", es: "Compra flash" },
@@ -118,12 +145,16 @@ const specimenTitles: Record<string, Record<"en" | "es", string>> = {
 export function PatternVisualExample({ pattern, locale = "en" }: PatternVisualExampleProps) {
   const [showEthical, setShowEthical] = useState(false);
   const render = visualExamples[pattern.slug];
+  const renderEthical = ethicalExamples[pattern.slug];
   const title = specimenTitles[pattern.slug] || { en: "Interface specimen", es: "Espécimen de interfaz" };
+  const frameTitle = locale === "en" ? title.en : title.es;
+  const minHeight = specimenMinHeight[pattern.slug] ?? "";
+  const ethicalNote = ethicalNotes[pattern.slug];
 
   if (!render) {
     return (
-      <SpecimenFrame title={locale === "en" ? title.en : title.es}>
-        <p className="text-muted">{pattern.summary}</p>
+      <SpecimenFrame title={frameTitle} locale={locale}>
+        <p className="text-muted">{localizePattern(pattern, locale as Locale).summary}</p>
       </SpecimenFrame>
     );
   }
@@ -132,16 +163,20 @@ export function PatternVisualExample({ pattern, locale = "en" }: PatternVisualEx
     <div className="space-y-4">
       <div className="flex gap-3">
         <button
+          type="button"
           onClick={() => setShowEthical(false)}
-          className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition ${
+          aria-pressed={!showEthical}
+          className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent ${
             !showEthical ? "bg-accent text-ink" : "border border-white/10 text-muted hover:border-accent/50"
           }`}
         >
           {locale === "es" ? "Patrón oscuro" : "Dark pattern"}
         </button>
         <button
+          type="button"
           onClick={() => setShowEthical(true)}
-          className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition ${
+          aria-pressed={showEthical}
+          className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition focus-visible:outline focus-visible:outline-1 focus-visible:outline-emerald-400 ${
             showEthical ? "bg-emerald-500 text-ink" : "border border-white/10 text-muted hover:border-emerald-500/50"
           }`}
         >
@@ -150,20 +185,40 @@ export function PatternVisualExample({ pattern, locale = "en" }: PatternVisualEx
       </div>
 
       {showEthical ? (
-        <div className="border border-emerald-400/30 bg-emerald-400/5 p-6">
-          <p className="text-xs uppercase tracking-[0.22em] text-emerald-400">
-            {locale === "es" ? "Alternativa ética" : "Ethical alternative"}
-          </p>
-          <p className="mt-3 text-sm leading-7 text-emerald-100/80">{localizePattern(pattern, locale as Locale).ethicalAlternative}</p>
-          <p className="mt-4 text-[10px] text-emerald-400/30">
-            {locale === "es"
-              ? "El diseño ético prioriza la autonomía del usuario sobre la conversión."
-              : "Ethical design prioritises user autonomy over conversion."}
-          </p>
-        </div>
+        renderEthical ? (
+          <div className="space-y-3">
+            <SpecimenFrame title={frameTitle} locale={locale} tone="ethical" minHeight={minHeight}>
+              {renderEthical(locale)}
+            </SpecimenFrame>
+            <div className="border border-emerald-400/20 bg-emerald-400/5 p-4">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-400/80">
+                {locale === "es" ? "Misma tarea, sin presión" : "Same task, no pressure"}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-emerald-100/80">
+                {ethicalNote
+                  ? locale === "es"
+                    ? ethicalNote.es
+                    : ethicalNote.en
+                  : localizePattern(pattern, locale as Locale).ethicalAlternative}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="border border-emerald-400/30 bg-emerald-400/5 p-6">
+            <p className="text-xs uppercase tracking-[0.22em] text-emerald-400">
+              {locale === "es" ? "Alternativa ética" : "Ethical alternative"}
+            </p>
+            <p className="mt-3 text-sm leading-7 text-emerald-100/80">{localizePattern(pattern, locale as Locale).ethicalAlternative}</p>
+            <p className="mt-4 text-[10px] text-emerald-400/60">
+              {locale === "es"
+                ? "El diseño ético prioriza la autonomía del usuario sobre la conversión."
+                : "Ethical design prioritises user autonomy over conversion."}
+            </p>
+          </div>
+        )
       ) : (
         <TrapRevealer slug={pattern.slug} locale={locale}>
-          <SpecimenFrame title={locale === "en" ? title.en : title.es}>
+          <SpecimenFrame title={frameTitle} locale={locale} minHeight={minHeight}>
             {render(locale)}
           </SpecimenFrame>
         </TrapRevealer>

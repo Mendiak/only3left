@@ -73,7 +73,7 @@ export default async function PatternPage({ params }: PatternPageProps) {
                 {pattern.category}
               </Link>
             </p>
-            <h1 className="mt-4 text-4xl font-black sm:text-6xl">{pattern.title}</h1>
+            <h1 className="mt-4 break-words text-4xl font-black sm:text-6xl">{pattern.title}</h1>
             <p className="mt-6 text-xl leading-9 text-muted">{pattern.summary}</p>
           </header>
 

@@ -55,6 +55,14 @@ const config: Config = {
           "0%, 100%": { boxShadow: "0 0 0 0 rgba(255,228,77,0)" },
           "50%": { boxShadow: "0 0 20px -8px rgba(255,228,77,0.3)" },
         },
+        "toast-in": {
+          "0%": { opacity: "0", transform: "translate3d(16px, 8px, 0) scale(0.98)" },
+          "100%": { opacity: "1", transform: "translate3d(0, 0, 0) scale(1)" },
+        },
+        "toast-out": {
+          "0%": { opacity: "1", transform: "translate3d(0, 0, 0) scale(1)" },
+          "100%": { opacity: "0", transform: "translate3d(0, 8px, 0) scale(0.98)" },
+        },
       },
       animation: {
         "slow-pulse": "slow-pulse 5s ease-in-out infinite",
@@ -66,6 +74,8 @@ const config: Config = {
         "scale-in": "scale-in 0.3s ease-out",
         shimmer: "shimmer 1.5s ease-in-out infinite",
         "card-glow": "card-glow 3s ease-in-out infinite",
+        "toast-in": "toast-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both",
+        "toast-out": "toast-out 0.18s ease-in both",
       },
     },
   },

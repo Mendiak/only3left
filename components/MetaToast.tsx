@@ -1,6 +1,17 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+
+/*
+ * Contrast floor for this demo toast:
+ * - Any readable copy uses `text-muted` (#888888): 5.58:1 on the ink/surface
+ *   background, which passes WCAG AA for normal text.
+ * - Never drop informational text below `text-muted/80` (3.94:1) and reserve
+ *   anything under 3:1 for purely decorative elements.
+ * - The tiny close target in "hard-close" is intentional (that is the dark
+ *   pattern), but it stays perceivable and keyboard reachable.
+ * - `contrast-more:` overrides bump the weakest text for users who request it.
+ */
 
 type Toast = {
   id: string;
@@ -22,12 +33,10 @@ function makeToast(locale: string): Toast {
 function Message({
   toast,
   locale,
-  onDismiss,
   onClose,
 }: {
   toast: Toast;
   locale: string;
-  onDismiss: () => void;
   onClose: () => void;
 }) {
   const isES = locale === "es";
@@ -85,11 +94,11 @@ function Message({
               : `Claim your prize in ${countdown}s`}
           </p>
           {buttonClicked ? (
-            <div className="animate-in space-y-2 border border-red-500/30 bg-red-500/10 p-3 text-center">
+            <div className="motion-safe:animate-fade-in space-y-2 border border-red-500/30 bg-red-500/10 p-3 text-center">
               <p className="text-xs font-bold text-accent">
                 {isES ? "Iluso..." : "Oh, sweet summer child..."}
               </p>
-              <p className="text-[10px] text-muted">
+              <p className="text-[11px] text-muted">
                 {isES
                   ? "Nunca fuiste el visitante 1000. El contador solo existe para que sientas urgencia y hagas clic sin pensar."
                   : "You were never visitor #1000. The counter only exists to create urgency so you click without thinking."}
@@ -98,7 +107,7 @@ function Message({
           ) : (
             <button
               onClick={() => { setButtonClicked(true); setTimeout(onClose, 2000); }}
-              className="w-full border border-accent/30 bg-accent/10 py-2 text-xs font-bold text-accent transition hover:bg-accent/20"
+              className="w-full border border-accent/30 bg-accent/10 py-2 text-xs font-bold text-accent transition hover:bg-accent/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               {isES ? "Reclamar" : "Claim prize"}
             </button>
@@ -116,7 +125,7 @@ function Message({
             <p className="text-sm font-black text-red-500 animate-pulse">
               {isES ? "⏰ OFERTA TERMINADA" : "⏰ OFFER EXPIRED"}
             </p>
-            <p className="text-[9px] text-muted/20">
+            <p className="text-[10px] text-muted contrast-more:text-paper">
               {isES ? "(por un momento)" : "(just for a moment)"}
             </p>
           </div>
@@ -131,15 +140,15 @@ function Message({
             </p>
           </div>
           <div className="flex items-center gap-1.5 text-xs">
-            <span className="text-muted/80">⏱</span>
+            <span className="text-muted">⏱</span>
             <span className="font-black text-red-400 font-mono">
               {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
             </span>
-            <span className="text-muted/60">
+            <span className="text-muted contrast-more:text-paper">
               {isES ? "restantes" : "remaining"}
             </span>
           </div>
-          <p className="text-[10px] text-muted/40">
+          <p className="text-[10px] text-muted contrast-more:text-paper">
             {isES
               ? "* Los tiempos de reacción no afectan a este contador"
               : "* Reaction times do not affect this counter"}
@@ -150,18 +159,18 @@ function Message({
     case "confirmshaming":
       return (
         <div className="space-y-3">
-          <p className="text-xs text-muted leading-relaxed">
+          <p className="text-xs text-muted leading-relaxed contrast-more:text-paper">
             {isES
               ? "Tranqui, no pasa nada si no entiendes los patrones oscuros. No todo el mundo los capta."
               : "Don't worry, it's okay if you don't understand dark patterns. Not everyone gets them."}
           </p>
           <button
             onClick={onClose}
-            className="w-full bg-accent py-2 text-xs font-black text-ink"
+            className="w-full bg-accent py-2 text-xs font-black text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-paper"
           >
             {isES ? "Aprender más" : "Learn more"}
           </button>
-          <p className="text-[9px] text-center text-muted/20">
+          <p className="text-[10px] text-center text-muted contrast-more:text-paper">
             {isES ? "No hay forma de cerrar sin hacer clic" : "No way to dismiss without clicking"}
           </p>
         </div>
@@ -174,13 +183,13 @@ function Message({
             <span className="text-lg">🔋</span>
             <p className="text-sm font-black">{isES ? "Batería baja" : "Low battery"}</p>
           </div>
-          <p className="text-xs text-muted">
+          <p className="text-xs text-muted contrast-more:text-paper">
             {isES ? "Tu batería está al 5%. Conecta ahora." : "Your battery is at 5%. Plug in now."}
           </p>
           <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
             <div className="h-full rounded-full bg-red-500" style={{ width: `${Math.random() * 10 + 2}%` }} />
           </div>
-          <p className="text-[9px] text-muted/20">
+          <p className="text-[10px] text-muted contrast-more:text-paper">
             {isES ? "No es real. Solo una notificación falsa." : "Not real. Just a fake notification."}
           </p>
         </div>
@@ -192,17 +201,18 @@ function Message({
           <p className="pr-4 text-xs font-bold text-paper">
             {isES ? "🔥 Oferta exclusiva para ti" : "🔥 Exclusive offer just for you"}
           </p>
-          <p className="text-xs text-muted">
+          <p className="text-xs text-muted contrast-more:text-paper">
             {isES ? "50% off si cierras esta ventana... espera, no." : "50% off if you close this window... wait, no."}
           </p>
           <button
             onClick={onClose}
-            className="absolute -right-1 -top-1 grid h-4 w-4 place-items-center border border-white/10 bg-ink text-[8px] text-muted/30 transition hover:text-muted/60"
+            aria-label={isES ? "Cerrar oferta" : "Close offer"}
+            className="absolute -right-1 -top-1 grid h-4 w-4 place-items-center border border-white/20 bg-ink text-[10px] text-muted transition hover:text-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent contrast-more:border-white/40 contrast-more:text-paper"
             style={{ padding: 0, minWidth: 0 }}
           >
             ✕
           </button>
-          <p className="text-[9px] text-muted/20">
+          <p className="text-[10px] text-muted contrast-more:text-paper">
             {isES ? "Intenta darle a la ✕ pequeña" : "Try hitting the tiny ✕"}
           </p>
         </div>
@@ -212,22 +222,41 @@ function Message({
 
 export function MetaToast({ locale = "en" }: { locale?: string }) {
   const [toast, setToast] = useState<Toast | null>(null);
+  const [exiting, setExiting] = useState(false);
+  const exitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Unmount only after the exit animation so the toast never disappears abruptly.
+  const leave = useCallback((after?: () => void) => {
+    setExiting(true);
+    if (exitTimer.current) clearTimeout(exitTimer.current);
+    exitTimer.current = setTimeout(() => {
+      setExiting(false);
+      setToast(null);
+      after?.();
+    }, 180);
+  }, []);
+
+  useEffect(() => () => {
+    if (exitTimer.current) clearTimeout(exitTimer.current);
+  }, []);
 
   const close = useCallback(() => {
-    setToast(null);
-  }, []);
+    // A manual close opts the visitor out for the rest of the session.
+    try { sessionStorage.setItem(STORAGE_KEY, "1"); } catch { /* ignore */ }
+    leave();
+  }, [leave]);
 
   const dismiss = useCallback(() => {
     if (!toast) return;
     const next = { ...toast, dismissCount: toast.dismissCount + 1 };
-    if (next.dismissCount >= 3) {
-      setToast(null);
+    const isLast = next.dismissCount >= 2;
+    if (isLast) {
       try { sessionStorage.setItem(STORAGE_KEY, "1"); } catch { /* ignore */ }
-      return;
     }
-    setToast(null);
-    setTimeout(() => setToast(next), 3000);
-  }, [toast]);
+    leave(() => {
+      if (!isLast) setTimeout(() => setToast(next), 3000);
+    });
+  }, [toast, leave]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -243,18 +272,27 @@ export function MetaToast({ locale = "en" }: { locale?: string }) {
   if (!toast) return null;
 
   return (
-    <div className="fixed bottom-20 right-4 z-40 w-[260px] animate-in border border-white/10 bg-[#0a0a0a] px-4 py-3 shadow-xl shadow-black/40 sm:bottom-24 sm:right-8">
-      <Message toast={toast} locale={locale} onDismiss={dismiss} onClose={close} />
+    <div
+      role="region"
+      aria-label={locale === "es" ? "Demo: toast de patrón oscuro" : "Demo: dark pattern toast"}
+      className={`fixed bottom-20 right-4 z-40 w-[260px] border border-white/15 bg-surface px-4 py-3 shadow-xl shadow-black/40 ring-1 ring-white/5 contrast-more:border-white/40 sm:bottom-24 sm:right-8 ${
+        exiting ? "motion-safe:animate-toast-out" : "motion-safe:animate-toast-in"
+      }`}
+    >
       {toast.type !== "confirmshaming" && toast.type !== "hard-close" && (
         <button
           onClick={dismiss}
-          className="mt-2 w-full text-[9px] text-muted/30 transition hover:text-muted/60"
+          aria-label={locale === "es" ? "Cerrar este aviso" : "Dismiss this toast"}
+          className="absolute right-1.5 top-1.5 grid h-6 w-6 place-items-center rounded text-xs text-muted transition hover:bg-white/5 hover:text-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent contrast-more:text-paper"
         >
-          {locale === "es" ? "✕ Cerrar" : "✕ Dismiss"}
+          ✕
         </button>
       )}
-      <p className="mt-1.5 text-[8px] text-center text-muted/10 uppercase tracking-widest">
-        {locale === "es" ? "🍪 Este toast es un patrón oscuro" : "🍪 This toast is a dark pattern"}
+      <div className={toast.type === "confirmshaming" || toast.type === "hard-close" ? undefined : "pr-6"}>
+        <Message toast={toast} locale={locale} onClose={close} />
+      </div>
+      <p className="mt-2 text-[10px] text-center text-muted uppercase tracking-widest contrast-more:text-paper">
+        {locale === "es" ? "Este toast es un patrón oscuro" : "This toast is a dark pattern"}
       </p>
     </div>
   );
